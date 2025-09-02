@@ -45,7 +45,17 @@ return userRepository.findById(id).orElse(null);
 
 
 
-
+public User updateUser(User user) {
+    try {
+        if (user.getName() != null) {
+            return userRepository.save(user);
+        } else {
+            throw new RuntimeException("User name cannot be null");
+        }
+    } catch (Exception e) {
+        throw new RuntimeException("Exception while updating user: " + e.getMessage(), e);
+    }
+}
 
 
 
