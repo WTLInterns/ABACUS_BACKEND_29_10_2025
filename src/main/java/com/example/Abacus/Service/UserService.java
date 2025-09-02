@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import com.example.Abacus.Model.User;
 import com.example.Abacus.Repo.UserRepo;
 
+import java.util.List;
+
 @Service
 public class UserService {
 
@@ -25,6 +27,11 @@ public class UserService {
             throw new RuntimeException("Exception while creating user: " + e.getMessage(), e);
         }
     }
+
+    public List<User> getAllUser(){
+        return userRepository.findAll();
+    }
+
 
 
     public User getUserById(int id) {
