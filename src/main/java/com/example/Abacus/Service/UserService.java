@@ -25,4 +25,29 @@ public class UserService {
             throw new RuntimeException("Exception while creating user: " + e.getMessage(), e);
         }
     }
+
+
+    public User getUserById(int id) {
+        try {
+return userRepository.findById(id).orElse(null);
+}  catch(Exception e) {
+            throw new RuntimeException("Exception while fetching user: " + e.getMessage(), e);
+        }
+    }
+
+    public void deleteUser(int id) {
+        try {
+            userRepository.deleteById(id);
+        } catch (Exception e) {
+            throw new RuntimeException("Exception while deleting user: " + e.getMessage(), e);
+        }
+    }
+
+
+
+
+
+
+
+
 }
