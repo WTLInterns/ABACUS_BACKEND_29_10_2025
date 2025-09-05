@@ -1,28 +1,39 @@
 package com.example.Abacus.Model;
 
-import jakarta.annotation.Generated;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 public class User {
-    
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int userId;
+
     private String name;
     private String email;
     private String password;
+
+    @Enumerated(value = EnumType.STRING)
+    private Role role;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private MasterAdmin masterAdmin;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Teacher teacher;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Student student;
+
+    public enum Role {
+        MASTER_ADMIN,
+        TEACHER,
+        STUDENT
+    }
 }
