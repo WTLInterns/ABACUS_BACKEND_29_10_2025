@@ -29,12 +29,7 @@ public class User {
 
     private String education;
 
-    
-
-
-
-
-
+    // ------------------------            --------------------------------//
 
     @Enumerated(value = EnumType.STRING)
     private Role role;

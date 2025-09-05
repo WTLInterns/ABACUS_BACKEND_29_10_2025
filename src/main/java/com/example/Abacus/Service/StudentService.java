@@ -4,14 +4,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.Abacus.DTO.requests.StudentRequest;
+import com.example.Abacus.DTO.response.StudentResponse;
 import com.example.Abacus.Model.Student;
 import com.example.Abacus.Model.Teacher;
 import com.example.Abacus.Repo.StudentRepo;
 import com.example.Abacus.Repo.TeacherRepo;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class StudentService {
-    
 
     @Autowired
     private StudentRepo studentRepo;
@@ -19,46 +22,113 @@ public class StudentService {
     @Autowired
     private TeacherRepo teacherRepo;
 
-
-    public StudentRequest createStudent(StudentRequest request, int teacherId){
+    // CREATE
+    public StudentResponse createStudent(StudentRequest request, int teacherId) {
         Student existingByName = studentRepo.findByFirstNameAndMiddleNameAndLastName(
-            request.getFirstName(),
-            request.getMiddleName(),
-            request.getLastName()
-    );
-    if (existingByName != null) {
-        throw new RuntimeException("Student already registered");
-    }
-    Teacher teacher = teacherRepo.findById(teacherId).orElse(null);
-    if (teacher == null) {
-        throw new RuntimeException("Teacher not found with id: " + teacherId);
-    }
+                request.getFirstName(),
+                request.getMiddleName(),
+                request.getLastName()
+        );
+        if (existingByName != null) {
+            throw new IllegalArgumentException("Student already registered");
+        }
 
-    Student student = new Student();
-    student.setFirstName(request.getFirstName());
-    student.setMiddleName(request.getMiddleName());
-    student.setLastName(request.getLastName());
-    student.setGender(request.getGender());
-    student.setWhatsappNumber(request.getWhatsappNumber());
-    student.setAddress(request.getAddress());
-    student.setDob(request.getDob());
-    student.setAddmissionDate(request.getAddmissionDate());
-    student.setStd(request.getStd());
-    student.setCurrentLevel(request.getCurrentLevel());
-    student.setCenter(request.getCenter());
-    student.setStd(request.getStd());
-    student.setState(request.getState());
-    student.setDistrict(request.getDistrict());
-    student.setCity(request.getCity());
-    student.setEmail(request.getEmail());
-    student.setTaluka(request.getTaluka());
-    
-student.setTeacher(teacher);
-studentRepo.save(student);
+        Teacher teacher = teacherRepo.findById(teacherId).orElseThrow(
+                () -> new IllegalArgumentException("Teacher not found with id: " + teacherId)
+        );
 
-    return request;
+        Student student = new Student();
+        student.setFirstName(request.getFirstName());
+        student.setMiddleName(request.getMiddleName());
+        student.setLastName(request.getLastName());
+        student.setGender(request.getGender());
+        student.setWhatsappNumber(request.getWhatsappNumber());
+        student.setAddress(request.getAddress());
+        student.setDob(request.getDob());
+        student.setAddmissionDate(request.getAddmissionDate());
+        student.setStd(request.getStd());
+        student.setCurrentLevel(request.getCurrentLevel());
+        student.setCenter(request.getCenter());
+        student.setState(request.getState());
+        student.setDistrict(request.getDistrict());
+        student.setCity(request.getCity());
+        student.setEmail(request.getEmail());
+        student.setTaluka(request.getTaluka());
+        student.setEnrollMeantType(request.getEnrollMeantType());
+        student.setTeacher(teacher);
 
+        Student saved = studentRepo.save(student);
+        return mapToResponse(saved);
     }
 
+    // READ by ID
+    public StudentResponse getStudentById(int id) {
+        Student student = studentRepo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Student not found with id: " + id));
+        return mapToResponse(student);
+    }
 
+    // READ all
+    public List<StudentResponse> getAllStudents() {
+        return studentRepo.findAll().stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
+    // UPDATE
+    public StudentResponse updateStudent(int id, StudentRequest request) {
+        Student student = studentRepo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Student not found with id: " + id));
+
+        student.setFirstName(request.getFirstName());
+        student.setMiddleName(request.getMiddleName());
+        student.setLastName(request.getLastName());
+        student.setGender(request.getGender());
+        student.setWhatsappNumber(request.getWhatsappNumber());
+        student.setAddress(request.getAddress());
+        student.setDob(request.getDob());
+        student.setAddmissionDate(request.getAddmissionDate());
+        student.setStd(request.getStd());
+        student.setCurrentLevel(request.getCurrentLevel());
+        student.setCenter(request.getCenter());
+        student.setState(request.getState());
+        student.setDistrict(request.getDistrict());
+        student.setCity(request.getCity());
+        student.setEmail(request.getEmail());
+        student.setTaluka(request.getTaluka());
+
+        return mapToResponse(studentRepo.save(student));
+    }
+
+    // DELETE
+    public String deleteStudent(int id) {
+        if (!studentRepo.existsById(id)) {
+            throw new IllegalArgumentException("Student not found with id: " + id);
+        }
+        studentRepo.deleteById(id);
+        return "Student deleted successfully with id: " + id;
+    }
+
+    // Mapper
+    private StudentResponse mapToResponse(Student student) {
+        return new StudentResponse(
+                student.getId(),
+                student.getEnrollMeantType(),
+                student.getFirstName(),
+                student.getMiddleName(),
+                student.getLastName(),
+                student.getGender(),
+                student.getWhatsappNumber(),
+                student.getDob(),
+                student.getAddmissionDate(),
+                student.getStd(),
+                student.getCurrentLevel(),
+                student.getCenter(),
+                student.getState(),
+                student.getDistrict(),
+                student.getAddress(),
+                student.getCity(),
+                student.getEmail()
+        );
+    }
 }

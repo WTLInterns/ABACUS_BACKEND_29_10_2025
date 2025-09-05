@@ -8,12 +8,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class StudentRequest {
-    
-    private int id;
+
 
     // @OneToOne
     // @JoinColumn(name = "user_id", referencedColumnName = "userId")
     // private User user;
+
+        private String enrollMeantType;
 
     private String firstName;
 

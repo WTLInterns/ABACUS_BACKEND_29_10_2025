@@ -1,0 +1,50 @@
+package com.example.Abacus.Controller;
+
+
+import com.example.Abacus.DTO.requests.StudentRequest;
+import com.example.Abacus.DTO.response.StudentResponse;
+import com.example.Abacus.Service.StudentService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/students")
+@RequiredArgsConstructor
+public class StudentController {
+
+    private final StudentService studentService;
+
+    // CREATE
+    @PostMapping("/createStudent/{teacherId}")
+    public ResponseEntity<StudentResponse> createStudent(@RequestBody StudentRequest request, @PathVariable int teacherId) {
+        return ResponseEntity.ok(studentService.createStudent(request,teacherId));
+    }
+
+    // READ by ID
+    @GetMapping("/{id}")
+    public StudentResponse getStudentById(@PathVariable int id) {
+        return studentService.getStudentById(id);
+    }
+
+    // READ all
+    @GetMapping("/getAllStudent")
+    public List<StudentResponse> getAllStudents() {
+        return studentService.getAllStudents();
+    }
+
+    // UPDATE
+    @PutMapping("/{id}")
+    public ResponseEntity<StudentResponse> updateStudent(@PathVariable int id, @RequestBody StudentRequest request) {
+        return ResponseEntity.ok(studentService.updateStudent(id, request));
+    }
+
+    // DELETE
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteStudent(@PathVariable int id) {
+        studentService.deleteStudent(id);
+        return ResponseEntity.ok("Student deleted successfully with id " + id);
+    }
+}

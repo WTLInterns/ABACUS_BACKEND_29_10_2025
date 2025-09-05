@@ -7,12 +7,14 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class StudentReponse {
+public class StudentResponse {
     private int id;
 
     // @OneToOne
     // @JoinColumn(name = "user_id", referencedColumnName = "userId")
     // private User user;
+
+    private String enrollMeantType;
 
     private String firstName;
 

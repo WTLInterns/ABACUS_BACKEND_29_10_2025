@@ -21,6 +21,8 @@ public class Student {
     // @JoinColumn(name = "user_id", referencedColumnName = "userId")
     // private User user;
 
+    private String enrollMeantType;
+
     private String firstName;
 
     private String middleName;
@@ -53,8 +55,8 @@ public class Student {
 
     private String email;
 
-@Enumerated(EnumType.STRING)
-private Role role = Role.STUDENT;
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.STUDENT;
 
     @ManyToOne
     @JoinColumn(name = "teacher_id")
