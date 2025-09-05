@@ -15,11 +15,15 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @OneToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "userId")
-    private User user;
+    // @OneToOne
+    // @JoinColumn(name = "user_id", referencedColumnName = "userId")
+    // private User user;
 
     private String name;
 
     private String email;
+
+    @ManyToOne
+    @JoinColumn(name = "teacher_id")
+    private Teacher teacher;
 }

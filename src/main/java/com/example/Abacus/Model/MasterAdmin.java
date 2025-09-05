@@ -1,5 +1,7 @@
 package com.example.Abacus.Model;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,4 +26,7 @@ public class MasterAdmin {
     private String email;
 
     private String password;
+
+    @OneToMany(mappedBy = "masterAdmin", cascade = CascadeType.ALL)
+    private List<Teacher> teachers;
 }

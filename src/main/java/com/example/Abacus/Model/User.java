@@ -28,8 +28,8 @@ public class User {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Teacher teacher;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private Student student;
+    // @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    // private Student student;
 
     public enum Role {
         MASTER_ADMIN,

@@ -1,5 +1,7 @@
 package com.example.Abacus.Model;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,4 +26,14 @@ public class Teacher {
     private String email;
 
     private String password;
+
+    @ManyToOne
+    @JoinColumn(name = "master_admin_id")
+    private MasterAdmin masterAdmin;
+
+
+    @OneToMany(mappedBy = "teacher")
+    private List<Student> students;
+
+
 }
