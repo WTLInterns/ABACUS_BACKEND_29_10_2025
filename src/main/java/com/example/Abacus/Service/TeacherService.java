@@ -3,15 +3,14 @@ package com.example.Abacus.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.Abacus.Model.User;
-import com.example.Abacus.Repo.UserRepo;
+import com.example.Abacus.Repo.TeacherRepo;
 
 @Service
-public class UserService {
+public class TeacherService {
     
 
     @Autowired
-    private UserRepo userRepo;
+    private TeacherRepo teacherRepository;
 
     
 }

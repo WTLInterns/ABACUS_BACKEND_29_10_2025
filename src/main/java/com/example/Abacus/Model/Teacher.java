@@ -36,7 +36,7 @@ public class Teacher {
     private MasterAdmin masterAdmin;
 
 
-    @OneToMany(mappedBy = "teacher")
+    @OneToMany(mappedBy = "teacher")      
     private List<Student> students;
 
 

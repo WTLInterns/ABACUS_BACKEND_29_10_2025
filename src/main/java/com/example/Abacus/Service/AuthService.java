@@ -70,16 +70,7 @@ public class AuthService {
                 // masterAdmin.setPassword();
                 masterAdminRepo.save(masterAdmin);
             }
-            case TEACHER -> {
-                Teacher teacher = new Teacher();
-                teacher.setFirstName(request.getFirstName());
-                teacher.setLastName(request.getLastName());
-                teacher.setEmail(request.getEmail());
-                teacher.setPassword(request.getPassword());
-                // teacher.setId(request.getId());
-                teacher.setUser(newUser);
-                teacherRepo.save(teacher);
-            }
+            
             
             default -> throw new RuntimeException("Invalid role");
         }
