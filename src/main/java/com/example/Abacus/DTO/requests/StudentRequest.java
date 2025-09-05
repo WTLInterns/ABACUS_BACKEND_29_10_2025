@@ -1,20 +1,14 @@
-package com.example.Abacus.Model;
+package com.example.Abacus.DTO.requests;
 
-import com.example.Abacus.Model.User.Role;
-
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Student {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class StudentRequest {
+    
     private int id;
 
     // @OneToOne
@@ -45,21 +39,12 @@ public class Student {
     
     private String district;
 
-    private String taluka;
-
     private String address; 
 
     private String city;
 
     private String email;
 
-@Enumerated(EnumType.STRING)
-private Role role = Role.STUDENT;
+    private String taluka;
+}    
 
-    @ManyToOne
-    @JoinColumn(name = "teacher_id")
-    private Teacher teacher;
-
-
-    
-}

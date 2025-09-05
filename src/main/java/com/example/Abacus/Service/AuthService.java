@@ -53,13 +53,16 @@ public class AuthService {
         newUser.setEmail(request.getEmail());
         newUser.setPassword(passwordEncoder.encode(request.getPassword()));
         newUser.setRole(request.getRole());
+        newUser.setFirstName(request.getFirstName());
+        newUser.setLastName(request.getLastName());
 
         userRepo.save(newUser);
 
         switch (request.getRole()) {
             case MASTER_ADMIN -> {
                 MasterAdmin masterAdmin = new MasterAdmin();
-                masterAdmin.setName(request.getName());
+                masterAdmin.setFirstName(request.getFirstName());
+                masterAdmin.setLastName(request.getLastName());
                 masterAdmin.setEmail(request.getEmail());
                 masterAdmin.setPassword(request.getPassword());
                 // masterAdmin.setId(request.getId());
@@ -69,21 +72,15 @@ public class AuthService {
             }
             case TEACHER -> {
                 Teacher teacher = new Teacher();
-                teacher.setName(request.getName());
+                teacher.setFirstName(request.getFirstName());
+                teacher.setLastName(request.getLastName());
                 teacher.setEmail(request.getEmail());
                 teacher.setPassword(request.getPassword());
                 // teacher.setId(request.getId());
                 teacher.setUser(newUser);
                 teacherRepo.save(teacher);
             }
-            case STUDENT -> {
-                Student student = new Student();
-                student.setName(request.getName());
-                student.setEmail(request.getEmail());
-                
-                // student.setUser(newUser);
-                studentRepo.save(student);
-            }
+            
             default -> throw new RuntimeException("Invalid role");
         }
 
@@ -111,3 +108,4 @@ public class AuthService {
     }
 
 }
+          

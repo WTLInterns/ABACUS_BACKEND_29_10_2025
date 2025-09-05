@@ -21,7 +21,9 @@ public class MasterAdmin {
     @JoinColumn(name = "user_id", referencedColumnName = "userId")
     private User user;
 
-    private String name;
+    private String firstName;
+
+    private String lastName;
 
     private String email;
 

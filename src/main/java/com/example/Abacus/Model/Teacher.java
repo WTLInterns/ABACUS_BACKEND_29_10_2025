@@ -21,11 +21,15 @@ public class Teacher {
     @JoinColumn(name = "user_id", referencedColumnName = "userId")
     private User user;
 
-    private String name;
+    private String firstName;
+
+    private String lastName;
 
     private String email;
 
     private String password;
+
+    private List<String> centers;
 
     @ManyToOne
     @JoinColumn(name = "master_admin_id")

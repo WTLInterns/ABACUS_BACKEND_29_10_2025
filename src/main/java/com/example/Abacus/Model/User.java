@@ -13,11 +13,28 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+
+    // --------------------------common field ---------------------------
     private int userId;
 
-    private String name;
+    private String firstName;
+    private String lastName;
+    
     private String email;
     private String password;
+
+
+    // --------------------------role teacher ---------------------------
+
+    private String education;
+
+    
+
+
+
+
+
 
     @Enumerated(value = EnumType.STRING)
     private Role role;
@@ -36,4 +53,6 @@ public class User {
         TEACHER,
         STUDENT
     }
+
+
 }
