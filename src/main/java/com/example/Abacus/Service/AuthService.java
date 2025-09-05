@@ -33,6 +33,7 @@ public class AuthService {
 
     @Autowired
     private TeacherRepo teacherRepo;
+
     @Autowired
     private StudentRepo studentRepo;
 

@@ -18,4 +18,10 @@ public class MasterAdmin {
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "userId")
     private User user;
+
+    private String name;
+
+    private String email;
+
+    private String password;
 }
