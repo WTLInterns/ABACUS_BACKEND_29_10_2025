@@ -2,6 +2,8 @@ package com.example.Abacus.Model;
 
 import java.util.List;
 
+import com.example.Abacus.Model.User.Role;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,6 +32,9 @@ public class Teacher {
     private String password;
 
     private List<String> centers;
+
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.TEACHER;
 
     @ManyToOne
     @JoinColumn(name = "master_admin_id")
