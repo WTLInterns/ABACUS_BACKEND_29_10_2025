@@ -1,5 +1,9 @@
 package com.example.Abacus.Model;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.example.Abacus.Model.User.Role;
 
 import jakarta.persistence.*;
@@ -20,6 +24,8 @@ public class Student {
     // @OneToOne
     // @JoinColumn(name = "user_id", referencedColumnName = "userId")
     // private User user;
+
+    private String enrollMeantType;
 
     private String firstName;
 
@@ -51,10 +57,17 @@ public class Student {
 
     private String city;
 
+    @ElementCollection
+    @CollectionTable(name = "student_level_marks", joinColumns = @JoinColumn(name = "student_id"))
+    @MapKeyColumn(name = "level")
+    @Column(name = "mark")
+    private Map<String, Integer> levelWiseMark = new HashMap<>();
     private String email;
 
-@Enumerated(EnumType.STRING)
-private Role role = Role.STUDENT;
+    private String status;
+
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.STUDENT;
 
     @ManyToOne
     @JoinColumn(name = "teacher_id")

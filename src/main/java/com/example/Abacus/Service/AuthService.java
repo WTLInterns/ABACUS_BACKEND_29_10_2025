@@ -1,17 +1,13 @@
 package com.example.Abacus.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.stereotype.Service;
 
 import com.example.Abacus.DTO.requests.LoginRequest;
 import com.example.Abacus.DTO.requests.SignupRequest;
 import com.example.Abacus.DTO.response.LoginResponse;
 import com.example.Abacus.DTO.response.SignupResponse;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 
 import com.example.Abacus.Model.MasterAdmin;
 import com.example.Abacus.Model.Student;
@@ -37,11 +33,7 @@ public class AuthService {
     @Autowired
     private StudentRepo studentRepo;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
+   
 
 // for sign up for all kind of roles
     public SignupResponse signup(SignupRequest request) {
@@ -51,7 +43,7 @@ public class AuthService {
 
         User newUser = new User();
         newUser.setEmail(request.getEmail());
-        newUser.setPassword(passwordEncoder.encode(request.getPassword()));
+        newUser.setPassword(request.getPassword());
         newUser.setRole(request.getRole());
         newUser.setFirstName(request.getFirstName());
         newUser.setLastName(request.getLastName());
@@ -79,23 +71,15 @@ public class AuthService {
     }
 
 
-//for login all kind of roles
- public LoginResponse login(LoginRequest request) {
-        try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            request.getEmail(),
-                            request.getPassword()
-                    )
-            );
-            User user = userRepo.findByEmail(request.getEmail())
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+public LoginResponse login(LoginRequest request) {
+        User user = userRepo.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-            return new LoginResponse("Login successful", user.getEmail(), user.getRole());
-
-        } catch (AuthenticationException e) {
+        if (!user.getPassword().equals(request.getPassword())) {
             throw new RuntimeException("Invalid credentials");
         }
+
+        return new LoginResponse("Login successful", user.getEmail(), user.getRole());
     }
 
 }
