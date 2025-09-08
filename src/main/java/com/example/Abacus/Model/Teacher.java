@@ -29,15 +29,14 @@ public class Teacher {
 
     private String password;
 
-    private List<String> centers;
+    @Enumerated(EnumType.STRING)
+    private User.Role role= User.Role.TEACHER;
 
     @ManyToOne
     @JoinColumn(name = "master_admin_id")
     private MasterAdmin masterAdmin;
 
-
     @OneToMany(mappedBy = "teacher")      
     private List<Student> students;
-
 
 }

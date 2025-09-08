@@ -56,11 +56,11 @@ public class StudentController {
     // update Status
 
     @PutMapping("/{studentId}/updateStatus")
-	public ResponseEntity<Student> changeStatus(@PathVariable int id, @RequestBody Map<String, String> requestBody) {
+	public ResponseEntity<Student> changeStatus(@PathVariable int studentId, @RequestBody Map<String, String> requestBody) {
 		String status = requestBody.get("status");
 
 		try {
-			Student updatedOrder = studentService.udpateStatus(id, status);
+			Student updatedOrder = studentService.udpateStatus(studentId, status);
 			return ResponseEntity.ok(updatedOrder);
 		} catch (NoSuchElementException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
