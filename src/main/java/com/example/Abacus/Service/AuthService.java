@@ -57,13 +57,9 @@ public class AuthService {
                 masterAdmin.setLastName(request.getLastName());
                 masterAdmin.setEmail(request.getEmail());
                 masterAdmin.setPassword(request.getPassword());
-                // masterAdmin.setId(request.getId());
                 masterAdmin.setUser(newUser);
-                // masterAdmin.setPassword();
                 masterAdminRepo.save(masterAdmin);
             }
-            
-            
             default -> throw new RuntimeException("Invalid role");
         }
 

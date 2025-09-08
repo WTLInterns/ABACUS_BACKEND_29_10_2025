@@ -31,7 +31,7 @@ public class Teacher {
 
     private String password;
 
-    private List<String> centers;
+    
 
     @Enumerated(EnumType.STRING)
     private Role role = Role.TEACHER;
@@ -40,9 +40,7 @@ public class Teacher {
     @JoinColumn(name = "master_admin_id")
     private MasterAdmin masterAdmin;
 
-
     @OneToMany(mappedBy = "teacher")      
     private List<Student> students;
-
 
 }
