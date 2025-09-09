@@ -80,11 +80,6 @@ public class Student {
     @JoinColumn(name = "competition_id")
     private List<Competition> competition;
 
-    
-
-    
-
-
 
 
 }

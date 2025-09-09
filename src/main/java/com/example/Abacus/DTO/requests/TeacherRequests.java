@@ -14,6 +14,14 @@ public class TeacherRequests {
     private String email;
     private String password;
 
+    private String paymentType;
+
+    private Long fees;
+
+    private Long paid;
+
+    private Long remainingAmount;
+
     
 
 
