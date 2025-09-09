@@ -2,6 +2,7 @@ package com.example.Abacus.Service;
 
 import com.example.Abacus.Model.User;
 import com.example.Abacus.Repo.UserRepo;
+import com.example.Abacus.Repo.StudentRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,9 @@ public class TeacherService {
 
     @Autowired
     private UserRepo userRepo;
+
+    @Autowired
+    private StudentRepo studentRepo;
 
     // CREATE
     public TeacherResponse saveTeacher(TeacherRequests request, int masterAdminId) {
@@ -102,6 +106,9 @@ public class TeacherService {
     public void deleteTeacher(int id) {
         Teacher teacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Teacher not found with id: " + id));
+        if (studentRepo.existsByTeacher(teacher)) {
+            throw new IllegalStateException("Cannot delete teacher with linked students");
+        }
         
         if (teacher.getUser() != null) {
             userRepo.delete(teacher.getUser());

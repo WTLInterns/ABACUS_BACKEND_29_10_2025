@@ -64,6 +64,7 @@ public class Student {
     @MapKeyColumn(name = "level")
     @Column(name = "mark")
     private Map<String, Integer> levelWiseMark = new HashMap<>();
+    
     private String email;
 
     private String status;
@@ -72,19 +73,11 @@ public class Student {
     private Role role = Role.STUDENT;
 
     @ManyToOne
-    @JoinColumn(name = "teacher_id")
+    @JoinColumn(name = "teacher_user_id", referencedColumnName = "user_id")
     private Teacher teacher;
 
 
-    @OneToMany
-    @JoinColumn(name = "competition_id")
+    @OneToMany(mappedBy = "student")
     private List<Competition> competition;
-
-    
-
-    
-
-
-
 
 }

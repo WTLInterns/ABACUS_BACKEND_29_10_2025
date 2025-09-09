@@ -26,7 +26,7 @@ public class StudentService {
     private TeacherRepo teacherRepo;
 
     // CREATE
-    public StudentResponse createStudent(StudentRequest request, int teacherId) {
+    public StudentResponse createStudent(StudentRequest request, int teacherUserId) {
         Student existingByName = studentRepo.findByFirstNameAndMiddleNameAndLastName(
                 request.getFirstName(),
                 request.getMiddleName(),
@@ -36,9 +36,12 @@ public class StudentService {
             throw new IllegalArgumentException("Student already registered");
         }
 
-        Teacher teacher = teacherRepo.findById(teacherId).orElseThrow(
-                () -> new IllegalArgumentException("Teacher not found with id: " + teacherId)
+        Teacher teacher = teacherRepo.findByUser_UserId(teacherUserId).orElseThrow(
+                () -> new IllegalArgumentException("Teacher not found with userId: " + teacherUserId)
         );
+        if (teacher.getUser() == null || teacher.getUser().getRole() != com.example.Abacus.Model.User.Role.TEACHER) {
+            throw new IllegalArgumentException("Provided userId does not belong to a TEACHER");
+        }
 
         Student student = new Student();
         student.setFirstName(request.getFirstName());
@@ -64,6 +67,13 @@ public class StudentService {
 
         Student saved = studentRepo.save(student);
         return mapToResponse(saved);
+    }
+
+    public List<StudentResponse> getStudentsByTeacherUserId(int teacherUserId) {
+        return studentRepo.findByTeacher_User_UserId(teacherUserId)
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 
     // READ by ID

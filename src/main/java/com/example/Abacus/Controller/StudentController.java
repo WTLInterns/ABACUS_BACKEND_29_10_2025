@@ -23,9 +23,9 @@ public class StudentController {
     private final StudentService studentService;
 
     // CREATE
-    @PostMapping("/createStudent/{teacherId}")
-    public ResponseEntity<StudentResponse> createStudent(@RequestBody StudentRequest request, @PathVariable int teacherId) {
-        return ResponseEntity.ok(studentService.createStudent(request,teacherId));
+    @PostMapping("/createStudent/{teacherUserId}")
+    public ResponseEntity<StudentResponse> createStudent(@RequestBody StudentRequest request, @PathVariable int teacherUserId) {
+        return ResponseEntity.ok(studentService.createStudent(request, teacherUserId));
     }
 
     // READ by ID
@@ -71,5 +71,11 @@ public class StudentController {
     @PutMapping("/{id}/marks")
     public Student updateMarks(@PathVariable int id, @RequestBody Map<String, Integer> levelMarks) {
         return studentService.updateLevelWiseMark(id, levelMarks);
+    }
+
+    // GET students by teacher user ID
+    @GetMapping("/teacher/{teacherUserId}")
+    public ResponseEntity<List<StudentResponse>> getStudentsByTeacher(@PathVariable int teacherUserId) {
+        return ResponseEntity.ok(studentService.getStudentsByTeacherUserId(teacherUserId));
     }
 }
