@@ -17,9 +17,7 @@ public class MasterAdmin {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @OneToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "userId")
-    private User user;
+    
 
     private String firstName;
 
@@ -28,6 +26,8 @@ public class MasterAdmin {
     private String email;
 
     private String password;
+
+    private String role;
 
     @OneToMany(mappedBy = "masterAdmin", cascade = CascadeType.ALL)
     private List<Teacher> teachers;

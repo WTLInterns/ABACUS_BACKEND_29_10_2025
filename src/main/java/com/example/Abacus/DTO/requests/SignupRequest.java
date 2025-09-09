@@ -1,6 +1,5 @@
 package com.example.Abacus.DTO.requests;
 
-import com.example.Abacus.Model.User.Role;
 
 import lombok.Data;
 
@@ -11,7 +10,7 @@ public class SignupRequest {
 
     private String email;
     private String password;
-    private Role role;
+    private String role;
 
     // -----------------for student-------------------
     

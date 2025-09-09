@@ -35,17 +35,29 @@ public class AuthController {
     }
 
     // for login
-    @PostMapping("/login")
+    @PostMapping("/masterAdminLogin")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         try {
-            LoginResponse response = authService.login(request);
+            LoginResponse response = authService.masterAdminLogin(request);
             return ResponseEntity.ok(response); 
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
     }
 
-    // for logout
+
+    @PostMapping("/teacherLogin")
+    public ResponseEntity<?> teacherLogin(@RequestBody LoginRequest request) {
+        try {
+            LoginResponse response = authService.teacherLogin(request);
+            return ResponseEntity.ok(response); 
+        } catch (RuntimeException e) 
+        {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
+    }
+
+
     @PostMapping("/logout")
     public ResponseEntity<?> logout() {
         return ResponseEntity.ok("Logged out successfully");

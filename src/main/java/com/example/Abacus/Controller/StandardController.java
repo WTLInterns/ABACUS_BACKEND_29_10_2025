@@ -40,7 +40,7 @@ public class StandardController {
     public ResponseEntity<Standard> updateStandard(@PathVariable Long id, @RequestBody Standard standard) {
         return ResponseEntity.ok(standardService.updateStandard(id, standard));
     }
-
+    
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteStandard(@PathVariable Long id) {
         standardService.deleteStandard(id);

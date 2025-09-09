@@ -1,7 +1,7 @@
 package com.example.Abacus.Service;
 
-import com.example.Abacus.Model.User;
-import com.example.Abacus.Repo.UserRepo;
+
+import com.example.Abacus.Repo.StudentRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,8 +28,7 @@ public class TeacherService {
     @Autowired
     private MasterAdminRepo masterAdminRepository;
 
-    @Autowired
-    private UserRepo userRepo;
+    
 
     @Autowired
     private PaymentRepo paymentRepo;
@@ -37,55 +36,51 @@ public class TeacherService {
     @Autowired
     private ReceiptService receiptService;
 
+    private StudentRepo studentRepo;
 
     // CREATE
     public TeacherResponse saveTeacher(TeacherRequests request, int masterAdminId) {
     Teacher existingTeacher = teacherRepository
         .findByFirstNameAndLastName(request.getFirstName(), request.getLastName());
     if (existingTeacher != null) {
-        throw new IllegalArgumentException("Teacher already registered");
+        throw new IllegalArgumentException("Teacher name already registered");
     }
 
-    if (userRepo.findByEmail(request.getEmail()).isPresent()) {
+    if (teacherRepository.findByEmail(request.getEmail()).isPresent()) {
         throw new IllegalArgumentException("Email already registered");
     }
 
     MasterAdmin masterAdmin = masterAdminRepository.findById(masterAdminId)
         .orElseThrow(() -> new IllegalArgumentException("Master Admin not found with id: " + masterAdminId));
 
-    User user = new User();
-    user.setFirstName(request.getFirstName());
-    user.setLastName(request.getLastName());
-    user.setEmail(request.getEmail());
-    user.setPassword(request.getPassword());
-    user.setRole(User.Role.TEACHER);
-    User savedUser = userRepo.save(user);
-
     Teacher teacher = new Teacher();
     teacher.setFirstName(request.getFirstName());
     teacher.setLastName(request.getLastName());
     teacher.setEmail(request.getEmail());
     teacher.setPassword(request.getPassword());
-    teacher.setRole(User.Role.TEACHER);
+    teacher.setRole("TEACHER");
     teacher.setFees(15000L);
-    teacher.setRemainingAmount(15000L); 
+    teacher.setRemainingAmount(15000L);
     teacher.setMasterAdmin(masterAdmin);
-    teacher.setUser(savedUser);
 
     Teacher savedTeacher = teacherRepository.save(teacher);
 
     if (request.getPaid() != null && request.getPaid() > 0) {
+        Long paid = request.getPaid();
+        Long totalFees = savedTeacher.getFees() != null ? savedTeacher.getFees() : 0L;
+        Long remaining = totalFees - paid;
+
         Payment payment = new Payment();
         payment.setReceiptNo("REC" + System.currentTimeMillis());
         payment.setPaymentMode(request.getPaymentType());
-        payment.setFees(teacher.getFees());
-        payment.setPaid(request.getPaid());
-        payment.setRemainingAmount(teacher.getFees() - request.getPaid());
+        payment.setFees(totalFees);
+        payment.setPaid(paid);
+        payment.setRemainingAmount(remaining);
         payment.setTeacher(savedTeacher);
 
         paymentRepo.save(payment);
 
-        savedTeacher.setRemainingAmount(teacher.getFees() - request.getPaid());
+        savedTeacher.setRemainingAmount(remaining);
         teacherRepository.save(savedTeacher);
 
         receiptService.generateReceipt(payment);
@@ -93,6 +88,7 @@ public class TeacherService {
 
     return mapToResponse(savedTeacher);
 }
+
 
 
     public List<TeacherResponse> getAllTeachers() {
@@ -116,14 +112,7 @@ public class TeacherService {
         teacher.setEmail(request.getEmail());
         teacher.setPassword(request.getPassword());
 
-        if (teacher.getUser() != null) {
-            User user = teacher.getUser();
-            user.setFirstName(request.getFirstName());
-            user.setLastName(request.getLastName());
-            user.setEmail(request.getEmail());
-            user.setPassword(request.getPassword());
-            userRepo.save(user);
-        }
+        
 
         Teacher updatedTeacher = teacherRepository.save(teacher);
         return mapToResponse(updatedTeacher);
@@ -132,10 +121,11 @@ public class TeacherService {
     public void deleteTeacher(int id) {
         Teacher teacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Teacher not found with id: " + id));
-        
-        if (teacher.getUser() != null) {
-            userRepo.delete(teacher.getUser());
+        if (studentRepo.existsByTeacher(teacher)) {
+            throw new IllegalStateException("Cannot delete teacher with linked students");
         }
+        
+        // teacherRepository.deleteById(id);
         
         teacherRepository.delete(teacher);
     }

@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
 @Entity
 @Data
 @AllArgsConstructor
@@ -17,23 +18,16 @@ import lombok.NoArgsConstructor;
 public class Payment {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Ensures auto-increment
     private int id;
 
-    private String  receiptNo;
-
+    private String receiptNo;
     private String paymentMode;
-
     private Long paid;
-
     private Long remainingAmount;
-
-    private Long fees; 
+    private Long fees;
 
     @ManyToOne
     @JoinColumn(name = "teacher_id")
     private Teacher teacher;
-
-
-
 }

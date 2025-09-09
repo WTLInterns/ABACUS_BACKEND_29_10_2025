@@ -12,17 +12,14 @@ import com.example.Abacus.DTO.response.SignupResponse;
 import com.example.Abacus.Model.MasterAdmin;
 import com.example.Abacus.Model.Student;
 import com.example.Abacus.Model.Teacher;
-import com.example.Abacus.Model.User;
 import com.example.Abacus.Repo.MasterAdminRepo;
 import com.example.Abacus.Repo.StudentRepo;
 import com.example.Abacus.Repo.TeacherRepo;
-import com.example.Abacus.Repo.UserRepo;
 
 @Service
 public class AuthService {
     
-    @Autowired
-    private UserRepo userRepo;
+    
 
     @Autowired
     private MasterAdminRepo masterAdminRepo;
@@ -37,46 +34,50 @@ public class AuthService {
 
 // for sign up for all kind of roles
     public SignupResponse signup(SignupRequest request) {
-        if (userRepo.findByEmail(request.getEmail()).isPresent()) {
+        if (masterAdminRepo.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("Email already registered");
         }
 
-        User newUser = new User();
-        newUser.setEmail(request.getEmail());
-        newUser.setPassword(request.getPassword());
-        newUser.setRole(request.getRole());
-        newUser.setFirstName(request.getFirstName());
-        newUser.setLastName(request.getLastName());
-
-        userRepo.save(newUser);
-
-        switch (request.getRole()) {
-            case MASTER_ADMIN -> {
-                MasterAdmin masterAdmin = new MasterAdmin();
+            MasterAdmin masterAdmin = new MasterAdmin();
                 masterAdmin.setFirstName(request.getFirstName());
                 masterAdmin.setLastName(request.getLastName());
                 masterAdmin.setEmail(request.getEmail());
-                masterAdmin.setPassword(request.getPassword());
-                masterAdmin.setUser(newUser);
-                masterAdminRepo.save(masterAdmin);
-            }
-            default -> throw new RuntimeException("Invalid role");
-        }
 
-        return new SignupResponse("User registered successfully", newUser.getEmail(), newUser.getRole());
+                masterAdmin.setRole("MASTER_ADMIN");
+                masterAdmin.setPassword(request.getPassword());
+                masterAdminRepo.save(masterAdmin);
+            
+           
+
+        return new SignupResponse("User registered successfully", masterAdmin.getEmail(), masterAdmin.getRole());
     }
 
 
-public LoginResponse login(LoginRequest request) {
-        User user = userRepo.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+public LoginResponse masterAdminLogin(LoginRequest request) {
+        MasterAdmin masterAdmin  = masterAdminRepo.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
 
-        if (!user.getPassword().equals(request.getPassword())) {
+        if (!masterAdmin.getPassword().equals(request.getPassword())) {
             throw new RuntimeException("Invalid credentials");
         }
 
-        return new LoginResponse("Login successful", user.getEmail(), user.getRole());
+        return new LoginResponse("Login successful", masterAdmin.getEmail(), masterAdmin.getRole(), masterAdmin.getId(), masterAdmin.getFirstName(), masterAdmin.getLastName());
+    }
+
+
+
+    public LoginResponse teacherLogin(LoginRequest request) {
+        Teacher teacher  = teacherRepo.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("Invalid Credentials"));
+
+        if (!teacher.getPassword().equals(request.getPassword())) {
+            throw new RuntimeException("Invalid credentials");
+        }
+
+        return new LoginResponse("Login successful", teacher.getEmail(), teacher.getRole(), teacher.getId(), teacher.getFirstName(), teacher.getLastName());
     }
 
 }
+
+
           

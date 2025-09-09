@@ -37,8 +37,11 @@ public class StudentService {
         }
 
         Teacher teacher = teacherRepo.findById(teacherId).orElseThrow(
-                () -> new IllegalArgumentException("Teacher not found with id: " + teacherId)
+                () -> new IllegalArgumentException("Teacher not found with userId: " + teacherId)
         );
+        if (teacher.getRole() != "TEACHER") {
+            throw new IllegalArgumentException("Provided userId does not belong to a TEACHER");
+        }
 
         Student student = new Student();
         student.setFirstName(request.getFirstName());
@@ -64,6 +67,13 @@ public class StudentService {
 
         Student saved = studentRepo.save(student);
         return mapToResponse(saved);
+    }
+
+    public List<StudentResponse> getStudentsByTeacherUserId(int teacherId) {
+        return studentRepo.findById(teacherId)
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 
     // READ by ID

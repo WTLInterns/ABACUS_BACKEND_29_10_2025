@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.example.Abacus.Model.User.Role;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -64,21 +63,26 @@ public class Student {
     @MapKeyColumn(name = "level")
     @Column(name = "mark")
     private Map<String, Integer> levelWiseMark = new HashMap<>();
+    
     private String email;
 
     private String status;
 
-    @Enumerated(EnumType.STRING)
-    private Role role = Role.STUDENT;
+    
+    private String role;
 
     @ManyToOne
     @JoinColumn(name = "teacher_id")
     private Teacher teacher;
 
 
-    @OneToMany
-    @JoinColumn(name = "competition_id")
+    @OneToMany(mappedBy = "student")
     private List<Competition> competition;
+
+    
+
+    
+
 
 
 
