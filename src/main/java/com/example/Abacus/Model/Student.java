@@ -57,6 +57,8 @@ public class Student {
 
     private String city;
 
+    private String registerNo;
+
     @ElementCollection
     @CollectionTable(name = "student_level_marks", joinColumns = @JoinColumn(name = "student_id"))
     @MapKeyColumn(name = "level")
@@ -73,8 +75,7 @@ public class Student {
     @JoinColumn(name = "teacher_id")
     private Teacher teacher;
 
-    
 
 
-    
+
 }

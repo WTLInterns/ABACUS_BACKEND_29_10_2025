@@ -1,5 +1,6 @@
 package com.example.Abacus.Service;
 
+import com.example.Abacus.utility.RegisterNoGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -58,6 +59,8 @@ public class StudentService {
         student.setTaluka(request.getTaluka());
         student.setEnrollMeantType(request.getEnrollMeantType());
         student.setTeacher(teacher);
+
+        student.setRegisterNo(RegisterNoGenerator.generateRegisterNo());
 
         Student saved = studentRepo.save(student);
         return mapToResponse(saved);
