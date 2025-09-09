@@ -113,26 +113,43 @@ public class StudentService {
 
     // Mapper
     private StudentResponse mapToResponse(Student student) {
-        return new StudentResponse(
-                student.getId(),
-                student.getEnrollMeantType(),
-                student.getFirstName(),
-                student.getMiddleName(),
-                student.getLastName(),
-                student.getGender(),
-                student.getWhatsappNumber(),
-                student.getDob(),
-                student.getAddmissionDate(),
-                student.getStd(),
-                student.getCurrentLevel(),
-                student.getCenter(),
-                student.getState(),
-                student.getDistrict(),
-                student.getAddress(),
-                student.getCity(),
-                student.getEmail()
-        );
+    int teacherId = 0;
+    String teacherFirstName = null;
+    String teacherLastName = null;
+    String teacherEmail = null;
+
+    if (student.getTeacher() != null) {
+        teacherId = student.getTeacher().getId();
+        teacherFirstName = student.getTeacher().getFirstName();
+        teacherLastName = student.getTeacher().getLastName();
+        teacherEmail = student.getTeacher().getEmail();
     }
+
+    return new StudentResponse(
+            student.getId(),
+            student.getEnrollMeantType(),
+            student.getFirstName(),
+            student.getMiddleName(),
+            student.getLastName(),
+            student.getGender(),
+            student.getWhatsappNumber(),
+            student.getDob(),
+            student.getAddmissionDate(),
+            student.getStd(),
+            student.getCurrentLevel(),
+            student.getCenter(),
+            student.getState(),
+            student.getDistrict(),
+            student.getAddress(),
+            student.getCity(),
+            student.getEmail(),
+            teacherId,
+            teacherFirstName,
+            teacherLastName,
+            teacherEmail
+    );
+}
+
 
 
     // updateStatus

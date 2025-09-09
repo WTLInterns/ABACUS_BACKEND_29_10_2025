@@ -73,6 +73,12 @@ public class Student {
     @JoinColumn(name = "teacher_id")
     private Teacher teacher;
 
+    @OneToMany
+    @JoinColumn(name = "competition_id")
+    private List<Competition> competition;
+
+    
+
     
 
 

@@ -45,4 +45,12 @@ public class StudentResponse {
     private String city;
 
     private String email;
+
+    private int teacherId;
+
+    private String teacherFirstName;
+
+    private String teacherLastName;
+
+    private String teacherEmail;
 }
