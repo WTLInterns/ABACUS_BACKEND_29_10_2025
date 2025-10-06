@@ -30,11 +30,15 @@ public Competition updateCompetition(int id, Competition competition){
     Competition existingCompetition = this.competitionRepository.findById(id).orElse(null);
     if(existingCompetition != null){
         existingCompetition.setCompetitionName(competition.getCompetitionName());
+        existingCompetition.setHeading(competition.getHeading());
         existingCompetition.setDescription(competition.getDescription());
+        existingCompetition.setRegistrationLastDate(competition.getRegistrationLastDate());
         existingCompetition.setStartDate(competition.getStartDate());
         existingCompetition.setEndDate(competition.getEndDate());
+        existingCompetition.setStatus(competition.getStatus());
+        return this.competitionRepository.save(existingCompetition);
     }
-    return this.competitionRepository.save(competition);
+    return null;
 }
 
 public void deleteCompetition(int id){

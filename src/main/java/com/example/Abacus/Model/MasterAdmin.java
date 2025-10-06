@@ -31,4 +31,7 @@ public class MasterAdmin {
 
     @OneToMany(mappedBy = "masterAdmin", cascade = CascadeType.ALL)
     private List<Teacher> teachers;
+
+    @OneToMany(mappedBy = "masterAdmin", cascade = CascadeType.ALL)
+    private List<Inventory> inventory;
 }

@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 public class Payment {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Ensures auto-increment
+    @GeneratedValue(strategy = GenerationType.IDENTITY) 
     private int id;
 
     private String receiptNo;

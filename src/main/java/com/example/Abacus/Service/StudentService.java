@@ -39,7 +39,7 @@ public class StudentService {
         Teacher teacher = teacherRepo.findById(teacherId).orElseThrow(
                 () -> new IllegalArgumentException("Teacher not found with userId: " + teacherId)
         );
-        if (teacher.getRole() != "TEACHER") {
+        if (!"TEACHER".equals(teacher.getRole())) {
             throw new IllegalArgumentException("Provided userId does not belong to a TEACHER");
         }
 
@@ -61,18 +61,88 @@ public class StudentService {
         student.setEmail(request.getEmail());
         student.setTaluka(request.getTaluka());
         student.setEnrollMeantType(request.getEnrollMeantType());
+        student.setStatus("PENDING"); // Automatically set status to PENDING
         student.setTeacher(teacher);
+        student.setCountry(request.getCountry());
 
+        // Automatically generate registerNo
         student.setRegisterNo(RegisterNoGenerator.generateRegisterNo());
 
         Student saved = studentRepo.save(student);
-        return mapToResponse(saved);
+        
+        // Create StudentResponse object and set values directly
+        StudentResponse response = new StudentResponse();
+        response.setId(saved.getId());
+        response.setEnrollMeantType(saved.getEnrollMeantType());
+        response.setFirstName(saved.getFirstName());
+        response.setMiddleName(saved.getMiddleName());
+        response.setLastName(saved.getLastName());
+        response.setGender(saved.getGender());
+        response.setWhatsappNumber(saved.getWhatsappNumber());
+        response.setDob(saved.getDob());
+        response.setAddmissionDate(saved.getAddmissionDate());
+        response.setStd(saved.getStd());
+        response.setCurrentLevel(saved.getCurrentLevel());
+        response.setCenter(saved.getCenter());
+        response.setState(saved.getState());
+        response.setDistrict(saved.getDistrict());
+        response.setAddress(saved.getAddress());
+        response.setCity(saved.getCity());
+        response.setEmail(saved.getEmail());
+        response.setTaluka(saved.getTaluka());
+        response.setCountry(saved.getCountry());
+        response.setStatus(saved.getStatus());
+        response.setLevelWiseMark(saved.getLevelWiseMark());
+        
+        if (saved.getTeacher() != null) {
+            response.setTeacherId(saved.getTeacher().getId());
+            response.setTeacherFirstName(saved.getTeacher().getFirstName());
+            response.setTeacherLastName(saved.getTeacher().getLastName());
+            response.setTeacherEmail(saved.getTeacher().getEmail());
+            // Set branch names from teacher
+            response.setBranchNames(saved.getTeacher().getBranchName());
+        }
+
+        return response;
     }
 
     public List<StudentResponse> getStudentsByTeacherUserId(int teacherId) {
-        return studentRepo.findById(teacherId)
+        return studentRepo.findByTeacherId(teacherId)
                 .stream()
-                .map(this::mapToResponse)
+                .map(student -> {
+                    StudentResponse response = new StudentResponse();
+                    response.setId(student.getId());
+                    response.setEnrollMeantType(student.getEnrollMeantType());
+                    response.setFirstName(student.getFirstName());
+                    response.setMiddleName(student.getMiddleName());
+                    response.setLastName(student.getLastName());
+                    response.setGender(student.getGender());
+                    response.setWhatsappNumber(student.getWhatsappNumber());
+                    response.setDob(student.getDob());
+                    response.setAddmissionDate(student.getAddmissionDate());
+                    response.setStd(student.getStd());
+                    response.setCurrentLevel(student.getCurrentLevel());
+                    response.setCenter(student.getCenter());
+                    response.setState(student.getState());
+                    response.setDistrict(student.getDistrict());
+                    response.setAddress(student.getAddress());
+                    response.setCity(student.getCity());
+                    response.setEmail(student.getEmail());
+                    response.setCountry(student.getCountry());
+                    response.setStatus(student.getStatus());
+                    response.setLevelWiseMark(student.getLevelWiseMark());
+                    
+                    if (student.getTeacher() != null) {
+                        response.setTeacherId(student.getTeacher().getId());
+                        response.setTeacherFirstName(student.getTeacher().getFirstName());
+                        response.setTeacherLastName(student.getTeacher().getLastName());
+                        response.setTeacherEmail(student.getTeacher().getEmail());
+                        // Set branch names from teacher
+                        response.setBranchNames(student.getTeacher().getBranchName());
+                    }
+                    
+                    return response;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -80,13 +150,80 @@ public class StudentService {
     public StudentResponse getStudentById(int id) {
         Student student = studentRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Student not found with id: " + id));
-        return mapToResponse(student);
+                
+        // Create StudentResponse object and set values directly
+        StudentResponse response = new StudentResponse();
+        response.setId(student.getId());
+        response.setEnrollMeantType(student.getEnrollMeantType());
+        response.setFirstName(student.getFirstName());
+        response.setMiddleName(student.getMiddleName());
+        response.setLastName(student.getLastName());
+        response.setGender(student.getGender());
+        response.setWhatsappNumber(student.getWhatsappNumber());
+        response.setDob(student.getDob());
+        response.setAddmissionDate(student.getAddmissionDate());
+        response.setStd(student.getStd());
+        response.setCurrentLevel(student.getCurrentLevel());
+        response.setCenter(student.getCenter());
+        response.setState(student.getState());
+        response.setDistrict(student.getDistrict());
+        response.setAddress(student.getAddress());
+        response.setCity(student.getCity());
+        response.setEmail(student.getEmail());
+        response.setCountry(student.getCountry());
+        response.setTaluka(student.getTaluka());
+        response.setStatus(student.getStatus());
+        response.setLevelWiseMark(student.getLevelWiseMark());
+        
+        if (student.getTeacher() != null) {
+            response.setTeacherId(student.getTeacher().getId());
+            response.setTeacherFirstName(student.getTeacher().getFirstName());
+            response.setTeacherLastName(student.getTeacher().getLastName());
+            response.setTeacherEmail(student.getTeacher().getEmail());
+            // Set branch names from teacher
+            response.setBranchNames(student.getTeacher().getBranchName());
+        }
+
+        return response;
     }
 
     // READ all
     public List<StudentResponse> getAllStudents() {
         return studentRepo.findAll().stream()
-                .map(this::mapToResponse)
+                .map(student -> {
+                    StudentResponse response = new StudentResponse();
+                    response.setId(student.getId());
+                    response.setEnrollMeantType(student.getEnrollMeantType());
+                    response.setFirstName(student.getFirstName());
+                    response.setMiddleName(student.getMiddleName());
+                    response.setLastName(student.getLastName());
+                    response.setGender(student.getGender());
+                    response.setWhatsappNumber(student.getWhatsappNumber());
+                    response.setDob(student.getDob());
+                    response.setAddmissionDate(student.getAddmissionDate());
+                    response.setStd(student.getStd());
+                    response.setCurrentLevel(student.getCurrentLevel());
+                    response.setCenter(student.getCenter());
+                    response.setState(student.getState());
+                    response.setDistrict(student.getDistrict());
+                    response.setAddress(student.getAddress());
+                    response.setCity(student.getCity());
+                    response.setEmail(student.getEmail());
+                    response.setCountry(student.getCountry());
+                    response.setStatus(student.getStatus());
+                    response.setLevelWiseMark(student.getLevelWiseMark());
+                    
+                    if (student.getTeacher() != null) {
+                        response.setTeacherId(student.getTeacher().getId());
+                        response.setTeacherFirstName(student.getTeacher().getFirstName());
+                        response.setTeacherLastName(student.getTeacher().getLastName());
+                        response.setTeacherEmail(student.getTeacher().getEmail());
+                        // Set branch names from teacher
+                        response.setBranchNames(student.getTeacher().getBranchName());
+                    }
+                    
+                    return response;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -111,8 +248,44 @@ public class StudentService {
         student.setCity(request.getCity());
         student.setEmail(request.getEmail());
         student.setTaluka(request.getTaluka());
+        student.setEnrollMeantType(request.getEnrollMeantType());
+        student.setCountry(request.getCountry());
 
-        return mapToResponse(studentRepo.save(student));
+        Student updatedStudent = studentRepo.save(student);
+        
+        // Create StudentResponse object and set values directly
+        StudentResponse response = new StudentResponse();
+        response.setId(updatedStudent.getId());
+        response.setEnrollMeantType(updatedStudent.getEnrollMeantType());
+        response.setFirstName(updatedStudent.getFirstName());
+        response.setMiddleName(updatedStudent.getMiddleName());
+        response.setLastName(updatedStudent.getLastName());
+        response.setGender(updatedStudent.getGender());
+        response.setWhatsappNumber(updatedStudent.getWhatsappNumber());
+        response.setDob(updatedStudent.getDob());
+        response.setAddmissionDate(updatedStudent.getAddmissionDate());
+        response.setStd(updatedStudent.getStd());
+        response.setCurrentLevel(updatedStudent.getCurrentLevel());
+        response.setCenter(updatedStudent.getCenter());
+        response.setState(updatedStudent.getState());
+        response.setDistrict(updatedStudent.getDistrict());
+        response.setAddress(updatedStudent.getAddress());
+        response.setCity(updatedStudent.getCity());
+        response.setEmail(updatedStudent.getEmail());
+        response.setCountry(updatedStudent.getCountry());
+        response.setStatus(updatedStudent.getStatus());
+        response.setLevelWiseMark(updatedStudent.getLevelWiseMark());
+        
+        if (updatedStudent.getTeacher() != null) {
+            response.setTeacherId(updatedStudent.getTeacher().getId());
+            response.setTeacherFirstName(updatedStudent.getTeacher().getFirstName());
+            response.setTeacherLastName(updatedStudent.getTeacher().getLastName());
+            response.setTeacherEmail(updatedStudent.getTeacher().getEmail());
+            // Set branch names from teacher
+            response.setBranchNames(updatedStudent.getTeacher().getBranchName());
+        }
+
+        return response;
     }
 
     // DELETE
@@ -124,55 +297,59 @@ public class StudentService {
         return "Student deleted successfully with id: " + id;
     }
 
-    // Mapper
-    private StudentResponse mapToResponse(Student student) {
-    int teacherId = 0;
-    String teacherFirstName = null;
-    String teacherLastName = null;
-    String teacherEmail = null;
-
-    if (student.getTeacher() != null) {
-        teacherId = student.getTeacher().getId();
-        teacherFirstName = student.getTeacher().getFirstName();
-        teacherLastName = student.getTeacher().getLastName();
-        teacherEmail = student.getTeacher().getEmail();
-    }
-
-    return new StudentResponse(
-            student.getId(),
-            student.getEnrollMeantType(),
-            student.getFirstName(),
-            student.getMiddleName(),
-            student.getLastName(),
-            student.getGender(),
-            student.getWhatsappNumber(),
-            student.getDob(),
-            student.getAddmissionDate(),
-            student.getStd(),
-            student.getCurrentLevel(),
-            student.getCenter(),
-            student.getState(),
-            student.getDistrict(),
-            student.getAddress(),
-            student.getCity(),
-            student.getEmail(),
-            teacherId,
-            teacherFirstName,
-            teacherLastName,
-            teacherEmail
-    );
-}
-
-
-
     // updateStatus
-
     public Student udpateStatus(int id, String status) {
     	Student cab = this.studentRepo.findById(id).orElseThrow(() -> new NoSuchElementException("Cart not found"));
     	cab.setStatus(status);
 		    return studentRepo.save(cab);
     }
 
+    public Student promoteLevel(int id , String level){
+        Student student = this.studentRepo.findById(id).orElseThrow(() -> new NoSuchElementException("Student not found"));
+        student.setCurrentLevel(level);
+        return studentRepo.save(student);
+    }
+
+    // Add this new method to get students by state
+    public List<StudentResponse> getStudentsByState(String state) {
+        return studentRepo.findAll().stream()
+                .filter(student -> state.equals(student.getState()))
+                .map(student -> {
+                    StudentResponse response = new StudentResponse();
+                    response.setId(student.getId());
+                    response.setEnrollMeantType(student.getEnrollMeantType());
+                    response.setFirstName(student.getFirstName());
+                    response.setMiddleName(student.getMiddleName());
+                    response.setLastName(student.getLastName());
+                    response.setGender(student.getGender());
+                    response.setWhatsappNumber(student.getWhatsappNumber());
+                    response.setDob(student.getDob());
+                    response.setAddmissionDate(student.getAddmissionDate());
+                    response.setStd(student.getStd());
+                    response.setCurrentLevel(student.getCurrentLevel());
+                    response.setCenter(student.getCenter());
+                    response.setState(student.getState());
+                    response.setDistrict(student.getDistrict());
+                    response.setAddress(student.getAddress());
+                    response.setCity(student.getCity());
+                    response.setEmail(student.getEmail());
+                    response.setCountry(student.getCountry());
+                    response.setStatus(student.getStatus());
+                    response.setLevelWiseMark(student.getLevelWiseMark());
+                    
+                    if (student.getTeacher() != null) {
+                        response.setTeacherId(student.getTeacher().getId());
+                        response.setTeacherFirstName(student.getTeacher().getFirstName());
+                        response.setTeacherLastName(student.getTeacher().getLastName());
+                        response.setTeacherEmail(student.getTeacher().getEmail());
+                        // Set branch names from teacher
+                        response.setBranchNames(student.getTeacher().getBranchName());
+                    }
+
+                    return response;
+                })
+                .collect(Collectors.toList());
+    }
 
     // marks entry 
     public Student updateLevelWiseMark(int studentId, Map<String, Integer> updatedMarks) {

@@ -1,5 +1,7 @@
 package com.example.Abacus.Repo;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,4 +15,10 @@ public interface StudentRepo extends JpaRepository<Student, Integer> {
     
 
     boolean existsByTeacher(Teacher teacher);
+
+    List<Student> findByStatus(String status);
+    
+    List<Student> findByTeacherId(int teacherId);
+
+    
 }

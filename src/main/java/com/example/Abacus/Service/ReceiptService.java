@@ -31,7 +31,7 @@ public class ReceiptService {
             document.open();
 
             // ===== HEADER =====
-            Paragraph header = new Paragraph("ABACUS INSTITUTE",
+            Paragraph header = new Paragraph("VERTEX ACADEMY ACADEMY",
                     FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16, BaseColor.BLACK));
             header.setAlignment(Element.ALIGN_CENTER);
             document.add(header);
@@ -77,7 +77,7 @@ public class ReceiptService {
             document.add(footer);
 
             // ===== QR CODE =====
-            String qrContent = "http://10.183.165.233:8085/payments/" + payment.getReceiptNo();
+            String qrContent = "http://192.168.1.26:8085/payments/" + payment.getReceiptNo();
             Image qrImage = generateQRCode(qrContent, 120, 120);
             qrImage.setAlignment(Element.ALIGN_CENTER);
             document.add(qrImage);

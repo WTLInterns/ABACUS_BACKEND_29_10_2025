@@ -39,10 +39,14 @@ public class Teacher {
     private Long remainingAmount;
 
     private String role;
+        private List<String> branchName;
+
 
     @ManyToOne
     @JoinColumn(name = "master_admin_id")
     private MasterAdmin masterAdmin;
+
+
 
    
 

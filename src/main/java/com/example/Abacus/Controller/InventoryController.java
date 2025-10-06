@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import com.example.Abacus.DTO.response.InventoryResponse;
 import com.example.Abacus.Model.Inventory;
 import com.example.Abacus.Service.InventoryService;
 
@@ -16,9 +17,9 @@ public class InventoryController {
     @Autowired
     private InventoryService inventoryService;
 
-    @PostMapping("/createInventory")
-    public Inventory createInventory(@RequestBody Inventory inventory) {
-        return inventoryService.createInventory(inventory);
+    @PostMapping("/createInventory/{masterAdminId}")
+    public Inventory createInventory(@RequestBody Inventory inventory, @PathVariable int masterAdminId) {
+        return inventoryService.createInventory(inventory,masterAdminId);
     }
 
 
@@ -37,9 +38,9 @@ public class InventoryController {
         return this.inventoryService.getInventoryById(id);
     }
 
-    @GetMapping("/getAllInventories")
-    public List<Inventory> getAllInventories(){
-        return this.inventoryService.getAllInventories();
+    @GetMapping("/getAllInventories/{masterAdminId}")
+    public List<InventoryResponse> getAllInventories(@PathVariable int masterAdminId){
+        return this.inventoryService.getAllInventories(masterAdminId);
     }
 
     

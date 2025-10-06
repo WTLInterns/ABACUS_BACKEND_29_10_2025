@@ -22,6 +22,8 @@ public class StudentRequest {
 
     private String lastName;
 
+    private String country;
+
     private String gender;
 
     private String whatsappNumber;

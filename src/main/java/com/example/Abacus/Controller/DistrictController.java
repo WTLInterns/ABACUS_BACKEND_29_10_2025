@@ -1,45 +1,92 @@
 package com.example.Abacus.Controller;
 
-import com.example.Abacus.Model.District;
-import com.example.Abacus.Service.DistrictService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.example.Abacus.DTO.response.DistrictResponse;
+import com.example.Abacus.Model.District;
+import com.example.Abacus.Service.DistrictService;
+
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/districts")
 public class DistrictController {
+    
+    @Autowired
+    private DistrictService districtService;
 
-    private final DistrictService districtService;
-
-    public DistrictController(DistrictService districtService) {
-        this.districtService = districtService;
+    @PostMapping("/add/{stateId}")
+    public ResponseEntity<DistrictResponse> createDistrict(@RequestBody District district, @PathVariable int stateId) {
+        District createdDistrict = districtService.createDistrict(district, stateId);
+        DistrictResponse districtResponse = new DistrictResponse(
+            createdDistrict.getId(), 
+            createdDistrict.getName(), 
+            createdDistrict.getState().getId(), 
+            createdDistrict.getState().getName()
+        );
+        return ResponseEntity.status(201).body(districtResponse);
     }
-
-    @GetMapping
-    public ResponseEntity<List<District>> getAll() {
-        return ResponseEntity.ok(districtService.getAll());
+    
+    @GetMapping("/state/{stateId}")
+    public ResponseEntity<List<DistrictResponse>> getDistrictsByState(@PathVariable int stateId) {
+        List<District> districts = districtService.getAllDistricts(stateId);
+        List<DistrictResponse> districtResponses = districts.stream()
+                .map(district -> new DistrictResponse(
+                    district.getId(), 
+                    district.getName(), 
+                    district.getState().getId(), 
+                    district.getState().getName()
+                ))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(districtResponses);
     }
-
+    
+    // New endpoint to get districts by state name
+    @GetMapping("/stateName/{stateName}")
+    public ResponseEntity<List<DistrictResponse>> getDistrictsByStateName(@PathVariable String stateName) {
+        List<District> districts = districtService.getDistrictsByStateName(stateName);
+        List<DistrictResponse> districtResponses = districts.stream()
+                .map(district -> new DistrictResponse(
+                    district.getId(), 
+                    district.getName(), 
+                    district.getState().getId(), 
+                    district.getState().getName()
+                ))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(districtResponses);
+    }
+    
     @GetMapping("/{id}")
-    public ResponseEntity<District> getById(@PathVariable int id) {
-        return ResponseEntity.ok(districtService.getById(id));
+    public ResponseEntity<DistrictResponse> getDistrictById(@PathVariable int id) {
+        District district = districtService.getDistrictById(id);
+        DistrictResponse districtResponse = new DistrictResponse(
+            district.getId(), 
+            district.getName(), 
+            district.getState().getId(), 
+            district.getState().getName()
+        );
+        return ResponseEntity.ok(districtResponse);
     }
-
-    @PostMapping
-    public ResponseEntity<District> create(@RequestBody District district) {
-        return ResponseEntity.status(201).body(districtService.create(district));
-    }
-
+    
     @PutMapping("/{id}")
-    public ResponseEntity<District> update(@PathVariable int id, @RequestBody District district) {
-        return ResponseEntity.ok(districtService.update(id, district));
+    public ResponseEntity<DistrictResponse> updateDistrict(@PathVariable int id, @RequestBody District district) {
+        district.setId(id); // Ensure the ID is set for update
+        District updatedDistrict = districtService.updateDistrict(district);
+        DistrictResponse districtResponse = new DistrictResponse(
+            updatedDistrict.getId(), 
+            updatedDistrict.getName(), 
+            updatedDistrict.getState().getId(), 
+            updatedDistrict.getState().getName()
+        );
+        return ResponseEntity.ok(districtResponse);
     }
-
+    
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathVariable int id) {
-        districtService.delete(id);
+    public ResponseEntity<String> deleteDistrict(@PathVariable int id) {
+        districtService.deleteDistrict(id);
         return ResponseEntity.ok("District deleted successfully");
     }
 }

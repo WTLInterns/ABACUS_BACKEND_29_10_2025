@@ -62,6 +62,12 @@ public class TeacherService {
     teacher.setFees(15000L);
     teacher.setRemainingAmount(15000L);
     teacher.setMasterAdmin(masterAdmin);
+    teacher.setBranchName(request.getBranchName());
+    
+    // Set new fields from request
+    teacher.setEducation(request.getEducation());
+    teacher.setMarkshit(request.getMarkshit());
+    teacher.setInvoice(request.getInvoice());
 
     Teacher savedTeacher = teacherRepository.save(teacher);
 
@@ -76,7 +82,7 @@ public class TeacherService {
         payment.setFees(totalFees);
         payment.setPaid(paid);
         payment.setRemainingAmount(remaining);
-        payment.setTeacher(savedTeacher);
+        payment.setTeacher(savedTeacher);           
 
         paymentRepo.save(payment);
 
@@ -111,8 +117,12 @@ public class TeacherService {
         teacher.setLastName(request.getLastName());
         teacher.setEmail(request.getEmail());
         teacher.setPassword(request.getPassword());
-
         
+        // Update new fields
+        teacher.setBranchName(request.getBranchName());
+        teacher.setEducation(request.getEducation());
+        teacher.setMarkshit(request.getMarkshit());
+        teacher.setInvoice(request.getInvoice());
 
         Teacher updatedTeacher = teacherRepository.save(teacher);
         return mapToResponse(updatedTeacher);
@@ -145,6 +155,8 @@ public class TeacherService {
         response.setFirstName(teacher.getFirstName());
         response.setLastName(teacher.getLastName());
         response.setEmail(teacher.getEmail());
+        response.setRole(teacher.getRole());
+        response.setBranchNames(teacher.getBranchName());
         
         if (teacher.getMasterAdmin() != null) {
             response.setMasterAdminName(teacher.getMasterAdmin().getFirstName() + " " + teacher.getMasterAdmin().getLastName());

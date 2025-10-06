@@ -50,6 +50,9 @@ public class Student {
     
     private String district;
 
+    private String country;
+
+
     private String taluka;
 
     private String address; 

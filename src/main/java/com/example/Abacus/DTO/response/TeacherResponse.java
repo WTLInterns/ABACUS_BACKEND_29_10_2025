@@ -16,5 +16,7 @@ public class TeacherResponse {
     private String lastName;
     private String email;
     private String masterAdminName;
+    private String role;
+    private List<String> branchNames;
 
 }

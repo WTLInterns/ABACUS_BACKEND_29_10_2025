@@ -1,5 +1,7 @@
 package com.example.Abacus.DTO.requests;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,14 +18,16 @@ public class TeacherRequests {
 
     private String paymentType;
 
+    private List<String> branchName;
+
     private Long fees;
 
     private Long paid;
 
     private Long remainingAmount;
-
     
-
-
-
+    // Added fields from frontend form
+    private String education;
+    private String markshit;
+    private String invoice;
 }

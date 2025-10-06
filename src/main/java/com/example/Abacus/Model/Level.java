@@ -1,40 +1,22 @@
 package com.example.Abacus.Model;
 
-import java.util.Map;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
-@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Inventory {
-     
+@Entity
+public class Level {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-   private String itemName;
-
-   private int quantity;
-
-   private Long pricePerItem;
-
-     @ManyToOne
-    @JoinColumn(name = "master_admin_id")
-    private MasterAdmin masterAdmin;
-
-
-
-
-
+    private String name;
 }

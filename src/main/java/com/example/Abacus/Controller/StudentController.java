@@ -34,7 +34,7 @@ public class StudentController {
         return studentService.getStudentById(id);
     }
 
-    // READ all
+    // READ all  
     @GetMapping("/getAllStudent")
     public List<StudentResponse> getAllStudents() {
         return studentService.getAllStudents();
@@ -67,6 +67,23 @@ public class StudentController {
 		}
 	}
 
+    @PutMapping("/{studentId}/promoteLevel")
+    public ResponseEntity<Student> promoteLevel(@PathVariable int studentId, @RequestBody Map<String, String> requestBody) {
+        String level = requestBody.get("level");
+        try {
+            Student updatedStudent = studentService.promoteLevel(studentId, level);
+            return ResponseEntity.ok(updatedStudent);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+    // Add this new endpoint to get students by state
+    @GetMapping("/state/{stateName}")
+    public ResponseEntity<List<StudentResponse>> getStudentsByState(@PathVariable String stateName) {
+        return ResponseEntity.ok(studentService.getStudentsByState(stateName));
+    }
+
     // update marks
     @PutMapping("/{id}/marks")
     public Student updateMarks(@PathVariable int id, @RequestBody Map<String, Integer> levelMarks) {
@@ -78,4 +95,5 @@ public class StudentController {
     public ResponseEntity<List<StudentResponse>> getStudentsByTeacher(@PathVariable int teacherUserId) {
         return ResponseEntity.ok(studentService.getStudentsByTeacherUserId(teacherUserId));
     }
+    
 }

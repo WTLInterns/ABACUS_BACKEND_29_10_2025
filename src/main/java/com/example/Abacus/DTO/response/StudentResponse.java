@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+import java.util.Map;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -53,4 +56,14 @@ public class StudentResponse {
     private String teacherLastName;
 
     private String teacherEmail;
+
+    private String country;
+
+    private String taluka;
+    
+    private String status;
+    
+    private List<String> branchNames;
+    
+    private Map<String, Integer> levelWiseMark;
 }
