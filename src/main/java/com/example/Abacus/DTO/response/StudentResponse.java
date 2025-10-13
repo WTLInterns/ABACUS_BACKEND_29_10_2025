@@ -66,4 +66,6 @@ public class StudentResponse {
     private List<String> branchNames;
     
     private Map<String, Integer> levelWiseMark;
+
+    private List<CompetitionResponse> competitions;
 }

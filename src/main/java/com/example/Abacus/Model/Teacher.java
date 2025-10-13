@@ -3,6 +3,8 @@ package com.example.Abacus.Model;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -55,4 +57,11 @@ public class Teacher {
 
     @OneToMany(mappedBy = "teacher")
     private List<Student> students;
+    
+    // One-to-Many relationship with Ledger
+    @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Ledger> ledgers = new ArrayList<>();
+
+    private String outstandingAmount;
 }

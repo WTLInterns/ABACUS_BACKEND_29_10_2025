@@ -43,5 +43,13 @@ public class InventoryController {
         return this.inventoryService.getAllInventories(masterAdminId);
     }
 
+
+    @GetMapping("/getAllInventory")
+    public List<InventoryResponse> getAllInventory(){
+        return this.inventoryService.getAllInventory();
+    }
+
+    
+
     
 }

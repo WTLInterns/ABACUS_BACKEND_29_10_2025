@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import com.example.Abacus.DTO.response.StudentResponse;
 import com.example.Abacus.Model.Student;
 import com.example.Abacus.Model.Teacher;
 
@@ -19,6 +20,7 @@ public interface StudentRepo extends JpaRepository<Student, Integer> {
     List<Student> findByStatus(String status);
     
     List<Student> findByTeacherId(int teacherId);
+
 
     
 }

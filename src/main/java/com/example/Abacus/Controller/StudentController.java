@@ -1,8 +1,8 @@
 package com.example.Abacus.Controller;
 
-
 import com.example.Abacus.DTO.requests.StudentRequest;
 import com.example.Abacus.DTO.response.StudentResponse;
+import com.example.Abacus.DTO.response.StudentLevelWiseMarkResponse;
 import com.example.Abacus.Model.Student;
 import com.example.Abacus.Service.StudentService;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/students")
@@ -54,14 +55,13 @@ public class StudentController {
     }
 
     // update Status
-
     @PutMapping("/{studentId}/updateStatus")
 	public ResponseEntity<Student> changeStatus(@PathVariable int studentId, @RequestBody Map<String, String> requestBody) {
 		String status = requestBody.get("status");
 
 		try {
-			Student updatedOrder = studentService.udpateStatus(studentId , status);
-			return ResponseEntity.ok(updatedOrder);
+			Student updatedStudent = studentService.udpateStatus(studentId , status);
+			return ResponseEntity.ok(updatedStudent);
 		} catch (NoSuchElementException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
@@ -96,4 +96,35 @@ public class StudentController {
         return ResponseEntity.ok(studentService.getStudentsByTeacherUserId(teacherUserId));
     }
     
+    // GET only approved students by teacher user ID
+    @GetMapping("/teacher/{teacherUserId}/approved")
+    public ResponseEntity<List<StudentResponse>> getApprovedStudentsByTeacher(@PathVariable int teacherUserId) {
+        return ResponseEntity.ok(studentService.getApprovedStudentsByTeacherUserId(teacherUserId));
+    }
+    
+    // GET student level and marks by student ID
+    @GetMapping("/{id}/levels-marks")
+    public ResponseEntity<List<StudentLevelWiseMarkResponse>> getStudentLevelsAndMarks(@PathVariable int id) {
+        try {
+            Student student = studentService.getStudentEntityById(id);
+            List<StudentLevelWiseMarkResponse> responseList = new ArrayList<>();
+            
+            if (student != null && student.getLevelWiseMark() != null) {
+                // Convert the levelWiseMark map to StudentLevelWiseMarkResponse objects
+                for (Map.Entry<String, Integer> entry : student.getLevelWiseMark().entrySet()) {
+                    StudentLevelWiseMarkResponse response = new StudentLevelWiseMarkResponse();
+                    response.setStudentName(student.getFirstName() + " " + 
+                        (student.getMiddleName() != null ? student.getMiddleName() + " " : "") + 
+                        student.getLastName());
+                    response.setLevel(entry.getKey());
+                    response.setMarks(entry.getValue() != null ? entry.getValue().toString() : "0");
+                    responseList.add(response);
+                }
+            }
+            
+            return ResponseEntity.ok(responseList);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
 }

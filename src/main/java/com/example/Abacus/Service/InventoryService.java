@@ -67,6 +67,16 @@ MasterAdmin masterAdmin = masterAdminRepo.findById(masterAdminId)
         )).collect(Collectors.toList());
 }
 
+public List<InventoryResponse> getAllInventory(){
+    return inventoryRepo.findAll().stream()
+        .map(inventory -> new InventoryResponse(
+                inventory.getId(),
+                inventory.getItemName(),
+                inventory.getQuantity(),
+                inventory.getPricePerItem()
+        )).collect(Collectors.toList());
+}
+
 
 
 

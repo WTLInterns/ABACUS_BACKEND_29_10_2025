@@ -1,9 +1,9 @@
 package com.example.Abacus.Model;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -78,15 +78,9 @@ public class Student {
     @JoinColumn(name = "teacher_id")
     private Teacher teacher;
 
-
-    @OneToMany(mappedBy = "student")
-    private List<Competition> competition;
-
-    
-
-    
-
-
-
+    // Many-to-One relationship with Competition (one competition can have many students)
+    @ManyToOne
+    @JoinColumn(name = "competition_id")
+    private Competition competition;
 
 }

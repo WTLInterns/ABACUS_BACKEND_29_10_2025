@@ -5,9 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.Abacus.DTO.requests.StudentRequest;
+import com.example.Abacus.DTO.response.CompetitionResponse;
 import com.example.Abacus.DTO.response.StudentResponse;
+import com.example.Abacus.Model.Competition;
 import com.example.Abacus.Model.Student;
 import com.example.Abacus.Model.Teacher;
+import com.example.Abacus.Repo.CompetitionRepo;
 import com.example.Abacus.Repo.StudentRepo;
 import com.example.Abacus.Repo.TeacherRepo;
 
@@ -24,6 +27,9 @@ public class StudentService {
 
     @Autowired
     private TeacherRepo teacherRepo;
+
+    @Autowired
+    private CompetitionRepo competitionRepo;
 
     // CREATE
     public StudentResponse createStudent(StudentRequest request, int teacherId) {
@@ -94,6 +100,12 @@ public class StudentService {
         response.setStatus(saved.getStatus());
         response.setLevelWiseMark(saved.getLevelWiseMark());
         
+        // Set competition (singular in one-to-many relationship)
+        if (saved.getCompetition() != null) {
+            CompetitionResponse competitionResponse = convertToCompetitionResponse(saved.getCompetition());
+            response.setCompetitions(List.of(competitionResponse));
+        }
+        
         if (saved.getTeacher() != null) {
             response.setTeacherId(saved.getTeacher().getId());
             response.setTeacherFirstName(saved.getTeacher().getFirstName());
@@ -131,6 +143,60 @@ public class StudentService {
                     response.setCountry(student.getCountry());
                     response.setStatus(student.getStatus());
                     response.setLevelWiseMark(student.getLevelWiseMark());
+                    
+                    // Set competition (singular in one-to-many relationship)
+                    if (student.getCompetition() != null) {
+                        CompetitionResponse competitionResponse = convertToCompetitionResponse(student.getCompetition());
+                        response.setCompetitions(List.of(competitionResponse));
+                    }
+                    
+                    if (student.getTeacher() != null) {
+                        response.setTeacherId(student.getTeacher().getId());
+                        response.setTeacherFirstName(student.getTeacher().getFirstName());
+                        response.setTeacherLastName(student.getTeacher().getLastName());
+                        response.setTeacherEmail(student.getTeacher().getEmail());
+                        // Set branch names from teacher
+                        response.setBranchNames(student.getTeacher().getBranchName());
+                    }
+                    
+                    return response;
+                })
+                .collect(Collectors.toList());
+    }
+
+    // GET only approved students by teacher user ID
+    public List<StudentResponse> getApprovedStudentsByTeacherUserId(int teacherId) {
+        return studentRepo.findByTeacherId(teacherId)
+                .stream()
+                .filter(student -> "APPROVED".equals(student.getStatus()))
+                .map(student -> {
+                    StudentResponse response = new StudentResponse();
+                    response.setId(student.getId());
+                    response.setEnrollMeantType(student.getEnrollMeantType());
+                    response.setFirstName(student.getFirstName());
+                    response.setMiddleName(student.getMiddleName());
+                    response.setLastName(student.getLastName());
+                    response.setGender(student.getGender());
+                    response.setWhatsappNumber(student.getWhatsappNumber());
+                    response.setDob(student.getDob());
+                    response.setAddmissionDate(student.getAddmissionDate());
+                    response.setStd(student.getStd());
+                    response.setCurrentLevel(student.getCurrentLevel());
+                    response.setCenter(student.getCenter());
+                    response.setState(student.getState());
+                    response.setDistrict(student.getDistrict());
+                    response.setAddress(student.getAddress());
+                    response.setCity(student.getCity());
+                    response.setEmail(student.getEmail());
+                    response.setCountry(student.getCountry());
+                    response.setStatus(student.getStatus());
+                    response.setLevelWiseMark(student.getLevelWiseMark());
+                    
+                    // Set competition (singular in one-to-many relationship)
+                    if (student.getCompetition() != null) {
+                        CompetitionResponse competitionResponse = convertToCompetitionResponse(student.getCompetition());
+                        response.setCompetitions(List.of(competitionResponse));
+                    }
                     
                     if (student.getTeacher() != null) {
                         response.setTeacherId(student.getTeacher().getId());
@@ -175,6 +241,12 @@ public class StudentService {
         response.setStatus(student.getStatus());
         response.setLevelWiseMark(student.getLevelWiseMark());
         
+        // Set competition (singular in one-to-many relationship)
+        if (student.getCompetition() != null) {
+            CompetitionResponse competitionResponse = convertToCompetitionResponse(student.getCompetition());
+            response.setCompetitions(List.of(competitionResponse));
+        }
+        
         if (student.getTeacher() != null) {
             response.setTeacherId(student.getTeacher().getId());
             response.setTeacherFirstName(student.getTeacher().getFirstName());
@@ -212,6 +284,12 @@ public class StudentService {
                     response.setCountry(student.getCountry());
                     response.setStatus(student.getStatus());
                     response.setLevelWiseMark(student.getLevelWiseMark());
+                    
+                    // Set competition (singular in one-to-many relationship)
+                    if (student.getCompetition() != null) {
+                        CompetitionResponse competitionResponse = convertToCompetitionResponse(student.getCompetition());
+                        response.setCompetitions(List.of(competitionResponse));
+                    }
                     
                     if (student.getTeacher() != null) {
                         response.setTeacherId(student.getTeacher().getId());
@@ -276,6 +354,12 @@ public class StudentService {
         response.setStatus(updatedStudent.getStatus());
         response.setLevelWiseMark(updatedStudent.getLevelWiseMark());
         
+        // Set competition (singular in one-to-many relationship)
+        if (updatedStudent.getCompetition() != null) {
+            CompetitionResponse competitionResponse = convertToCompetitionResponse(updatedStudent.getCompetition());
+            response.setCompetitions(List.of(competitionResponse));
+        }
+        
         if (updatedStudent.getTeacher() != null) {
             response.setTeacherId(updatedStudent.getTeacher().getId());
             response.setTeacherFirstName(updatedStudent.getTeacher().getFirstName());
@@ -287,8 +371,21 @@ public class StudentService {
 
         return response;
     }
+    
+    // Helper method to convert Competition to CompetitionResponse
+    private CompetitionResponse convertToCompetitionResponse(Competition competition) {
+        CompetitionResponse response = new CompetitionResponse();
+        response.setId(competition.getId());
+        response.setCompetitionName(competition.getCompetitionName());
+        response.setHeading(competition.getHeading());
+        response.setDescription(competition.getDescription());
+        response.setRegistrationLastDate(competition.getRegistrationLastDate());
+        response.setStartDate(competition.getStartDate());
+        response.setEndDate(competition.getEndDate());
+        response.setStatus(competition.getStatus());
+        return response;
+    }
 
-    // DELETE
     public String deleteStudent(int id) {
         if (!studentRepo.existsById(id)) {
             throw new IllegalArgumentException("Student not found with id: " + id);
@@ -299,9 +396,9 @@ public class StudentService {
 
     // updateStatus
     public Student udpateStatus(int id, String status) {
-    	Student cab = this.studentRepo.findById(id).orElseThrow(() -> new NoSuchElementException("Cart not found"));
-    	cab.setStatus(status);
-		    return studentRepo.save(cab);
+        Student student = this.studentRepo.findById(id).orElseThrow(() -> new NoSuchElementException("Student not found"));
+        student.setStatus(status);
+        return studentRepo.save(student);
     }
 
     public Student promoteLevel(int id , String level){
@@ -337,6 +434,12 @@ public class StudentService {
                     response.setStatus(student.getStatus());
                     response.setLevelWiseMark(student.getLevelWiseMark());
                     
+                    // Set competition (singular in one-to-many relationship)
+                    if (student.getCompetition() != null) {
+                        CompetitionResponse competitionResponse = convertToCompetitionResponse(student.getCompetition());
+                        response.setCompetitions(List.of(competitionResponse));
+                    }
+                    
                     if (student.getTeacher() != null) {
                         response.setTeacherId(student.getTeacher().getId());
                         response.setTeacherFirstName(student.getTeacher().getFirstName());
@@ -359,5 +462,10 @@ public class StudentService {
         student.getLevelWiseMark().putAll(updatedMarks);
 
         return studentRepo.save(student);
+    }
+    
+    public Student getStudentEntityById(int id) {
+        return studentRepo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Student not found with id: " + id));
     }
 }
