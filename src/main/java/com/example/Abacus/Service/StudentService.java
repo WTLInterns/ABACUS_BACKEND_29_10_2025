@@ -66,6 +66,7 @@ public class StudentService {
         student.setCity(request.getCity());
         student.setEmail(request.getEmail());
         student.setTaluka(request.getTaluka());
+        student.setPinCode(request.getPinCode());
         student.setEnrollMeantType(request.getEnrollMeantType());
         student.setStatus("PENDING"); // Automatically set status to PENDING
         student.setTeacher(teacher);
@@ -95,6 +96,7 @@ public class StudentService {
         response.setAddress(saved.getAddress());
         response.setCity(saved.getCity());
         response.setEmail(saved.getEmail());
+        response.setPinCode(saved.getPinCode());
         response.setTaluka(saved.getTaluka());
         response.setCountry(saved.getCountry());
         response.setStatus(saved.getStatus());
@@ -236,8 +238,9 @@ public class StudentService {
         response.setAddress(student.getAddress());
         response.setCity(student.getCity());
         response.setEmail(student.getEmail());
-        response.setCountry(student.getCountry());
+        response.setPinCode(student.getPinCode());
         response.setTaluka(student.getTaluka());
+        response.setCountry(student.getCountry());
         response.setStatus(student.getStatus());
         response.setLevelWiseMark(student.getLevelWiseMark());
         
@@ -326,6 +329,7 @@ public class StudentService {
         student.setCity(request.getCity());
         student.setEmail(request.getEmail());
         student.setTaluka(request.getTaluka());
+        student.setPinCode(request.getPinCode());
         student.setEnrollMeantType(request.getEnrollMeantType());
         student.setCountry(request.getCountry());
 
@@ -350,6 +354,7 @@ public class StudentService {
         response.setAddress(updatedStudent.getAddress());
         response.setCity(updatedStudent.getCity());
         response.setEmail(updatedStudent.getEmail());
+        response.setPinCode(updatedStudent.getPinCode());
         response.setCountry(updatedStudent.getCountry());
         response.setStatus(updatedStudent.getStatus());
         response.setLevelWiseMark(updatedStudent.getLevelWiseMark());

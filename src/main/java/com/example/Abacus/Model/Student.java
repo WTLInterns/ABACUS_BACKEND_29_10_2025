@@ -61,6 +61,8 @@ public class Student {
 
     private String registerNo;
 
+    private String pinCode;
+
     @ElementCollection
     @CollectionTable(name = "student_level_marks", joinColumns = @JoinColumn(name = "student_id"))
     @MapKeyColumn(name = "level")

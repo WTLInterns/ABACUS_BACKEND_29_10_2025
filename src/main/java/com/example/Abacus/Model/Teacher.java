@@ -35,6 +35,12 @@ public class Teacher {
     private String markshit;
     private String education;
 
+    private String addharImage;
+
+    private String markshitImage;
+
+    
+
     private Long fees;
     private String invoice;
 

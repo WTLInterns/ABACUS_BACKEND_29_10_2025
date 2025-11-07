@@ -49,6 +49,8 @@ public class StudentResponse {
 
     private String email;
 
+    private String pinCode;
+
     private int teacherId;
 
     private String teacherFirstName;

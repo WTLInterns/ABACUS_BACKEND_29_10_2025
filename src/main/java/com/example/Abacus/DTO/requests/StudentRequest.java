@@ -49,5 +49,6 @@ public class StudentRequest {
     private String email;
 
     private String taluka;
-}    
 
+    private String pinCode;
+}    

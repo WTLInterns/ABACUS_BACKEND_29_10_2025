@@ -34,7 +34,7 @@ public class CloudinaryService {
      * @return A map containing the upload result information
      * @throws IOException If there's an error during upload
      */
-    public Map upload(MultipartFile file) throws IOException {
+    public Map<String, Object> upload(MultipartFile file) throws IOException {
         return cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
     }
 
@@ -45,7 +45,7 @@ public class CloudinaryService {
      * @return A map containing the deletion result information
      * @throws IOException If there's an error during deletion
      */
-    public Map delete(String publicId) throws IOException {
+    public Map<String, Object> delete(String publicId) throws IOException {
         return cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
     }
 }
