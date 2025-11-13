@@ -24,8 +24,9 @@ public class TeacherController {
             @RequestPart("data") TeacherRequests request,
             @RequestPart(value = "addharImage", required = false) MultipartFile addharImage,
             @RequestPart(value = "markshitImage", required = false) MultipartFile markshitImage,
+            @RequestPart(value = "profilePicture", required = false) MultipartFile profilePicture,
             @RequestParam("masterAdminId") int masterAdminId) {
-        return ResponseEntity.ok(teacherService.saveTeacherWithImages(request, masterAdminId, addharImage, markshitImage));
+        return ResponseEntity.ok(teacherService.saveTeacherWithImages(request, masterAdminId, addharImage, markshitImage, profilePicture));
     }
 
     @GetMapping

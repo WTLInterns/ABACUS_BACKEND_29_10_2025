@@ -18,5 +18,6 @@ public class TeacherResponse {
     private String masterAdminName;
     private String role;
     private List<String> branchNames;
+    private String profilePicture; // Add profile picture URL
 
 }

@@ -1,6 +1,7 @@
 package com.example.Abacus.Service;
 
 import com.example.Abacus.utility.RegisterNoGenerator;
+import com.example.Abacus.utility.StudentIdGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +32,9 @@ public class StudentService {
     @Autowired
     private CompetitionRepo competitionRepo;
 
+    @Autowired
+    private StudentIdGenerator studentIdGenerator;
+
     // CREATE
     public StudentResponse createStudent(StudentRequest request, int teacherId) {
         Student existingByName = studentRepo.findByFirstNameAndMiddleNameAndLastName(
@@ -50,6 +54,8 @@ public class StudentService {
         }
 
         Student student = new Student();
+        // Set custom ID using our generator
+        student.setId(studentIdGenerator.generateNextStudentId());
         student.setFirstName(request.getFirstName());
         student.setMiddleName(request.getMiddleName());
         student.setLastName(request.getLastName());

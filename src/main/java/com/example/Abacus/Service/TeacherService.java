@@ -76,6 +76,7 @@ public class TeacherService {
     teacher.setEducation(request.getEducation());
     teacher.setMarkshit(request.getMarkshit());
     teacher.setInvoice(request.getInvoice());
+    teacher.setProfilePicture(request.getProfilePicture());
 
     Teacher savedTeacher = teacherRepository.save(teacher);
 
@@ -105,7 +106,8 @@ public class TeacherService {
 
     public TeacherResponse saveTeacherWithImages(TeacherRequests request, int masterAdminId,
                                                 MultipartFile addharImage,
-                                                MultipartFile markshitImage) {
+                                                MultipartFile markshitImage,
+                                                MultipartFile profilePicture) {
         // Validate uniqueness and load master admin
         Teacher existingTeacher = teacherRepository
                 .findByFirstNameAndLastName(request.getFirstName(), request.getLastName());
@@ -150,6 +152,14 @@ public class TeacherService {
                     teacher.setMarkshitImage(url.toString());
                 }
             }
+            // Handle profile picture upload
+            if (profilePicture != null && !profilePicture.isEmpty()) {
+                Map<String, Object> uploadRes = cloudinaryService.upload(profilePicture);
+                Object url = uploadRes.get("secure_url");
+                if (url != null) {
+                    teacher.setProfilePicture(url.toString());
+                }
+            }
         } catch (IOException e) {
             throw new RuntimeException("Failed to upload images", e);
         }
@@ -182,6 +192,7 @@ public class TeacherService {
 
 
 
+
     public List<TeacherResponse> getAllTeachers() {
         return teacherRepository.findAll().stream()
                 .map(this::mapToResponse)
@@ -208,6 +219,7 @@ public class TeacherService {
         teacher.setEducation(request.getEducation());
         teacher.setMarkshit(request.getMarkshit());
         teacher.setInvoice(request.getInvoice());
+        teacher.setProfilePicture(request.getProfilePicture());
 
         Teacher updatedTeacher = teacherRepository.save(teacher);
         return mapToResponse(updatedTeacher);
@@ -230,6 +242,13 @@ public class TeacherService {
             }
             if (teacher.getMarkshitImage() != null && !teacher.getMarkshitImage().isEmpty()) {
                 String publicId = extractCloudinaryPublicId(teacher.getMarkshitImage());
+                if (publicId != null) {
+                    cloudinaryService.delete(publicId);
+                }
+            }
+            // Delete profile picture from Cloudinary if present
+            if (teacher.getProfilePicture() != null && !teacher.getProfilePicture().isEmpty()) {
+                String publicId = extractCloudinaryPublicId(teacher.getProfilePicture());
                 if (publicId != null) {
                     cloudinaryService.delete(publicId);
                 }
@@ -258,6 +277,7 @@ public class TeacherService {
         response.setEmail(teacher.getEmail());
         response.setRole(teacher.getRole());
         response.setBranchNames(teacher.getBranchName());
+        response.setProfilePicture(teacher.getProfilePicture()); // Add profile picture to response
         
         if (teacher.getMasterAdmin() != null) {
             response.setMasterAdminName(teacher.getMasterAdmin().getFirstName() + " " + teacher.getMasterAdmin().getLastName());

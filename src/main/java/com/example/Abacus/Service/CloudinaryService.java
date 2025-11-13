@@ -15,9 +15,9 @@ public class CloudinaryService {
     private Cloudinary cloudinary;
     
     // Your Cloudinary credentials
-    private static final String CLOUD_NAME = "dwv4ommho"; // Replace with your actual cloud name
-    private static final String API_KEY = "582875762753276";
-    private static final String API_SECRET = "apH9WHPk7fsMubtt8C89JKUVP7U";
+    private static final String CLOUD_NAME = "dwv4ommho"; // Updated cloud name
+    private static final String API_KEY = "582875762753276"; // Updated API key
+    private static final String API_SECRET = "apH9WHPk7fsMubtt8C89JKUVP7U"; // Updated API secret
 
     @PostConstruct
     public void initializeCloudinary() {

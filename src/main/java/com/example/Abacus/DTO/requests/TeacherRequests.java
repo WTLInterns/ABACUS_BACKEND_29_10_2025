@@ -30,4 +30,7 @@ public class TeacherRequests {
     private String education;
     private String markshit;
     private String invoice;
+    
+    // Profile picture URL
+    private String profilePicture;
 }

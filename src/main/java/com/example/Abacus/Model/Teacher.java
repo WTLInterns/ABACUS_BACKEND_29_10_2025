@@ -50,6 +50,9 @@ public class Teacher {
         private List<String> branchName;
 
 
+        private String profilePicture;
+
+
     @ManyToOne
     @JoinColumn(name = "master_admin_id")
     private MasterAdmin masterAdmin;
@@ -70,4 +73,6 @@ public class Teacher {
     private List<Ledger> ledgers = new ArrayList<>();
 
     private String outstandingAmount;
+
+
 }
