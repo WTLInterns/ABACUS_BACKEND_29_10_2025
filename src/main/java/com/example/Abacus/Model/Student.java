@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 public class Student {
 
     @Id
+    @Column(name = "id")
     private int id;
 
     // @OneToOne

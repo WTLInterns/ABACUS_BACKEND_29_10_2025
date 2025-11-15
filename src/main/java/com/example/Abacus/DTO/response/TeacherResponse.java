@@ -19,5 +19,18 @@ public class TeacherResponse {
     private String role;
     private List<String> branchNames;
     private String profilePicture; // Add profile picture URL
-
+    private String teacherId;
+    
+    // Add fees related fields
+    private Long fees;
+    private Long remainingAmount;
+    private Long paid;
+    
+    // Add additional fields
+    private String education;
+    private String markshit;
+    private String invoice;
+    private String paymentType;
+    private String markshitImage;
+    private String aadharImage;
 }

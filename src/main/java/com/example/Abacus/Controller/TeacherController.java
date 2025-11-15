@@ -43,6 +43,16 @@ public class TeacherController {
     public ResponseEntity<TeacherResponse> updateTeacher(@PathVariable int id, @RequestBody TeacherRequests request) {
         return ResponseEntity.ok(teacherService.updateTeacher(id, request));
     }
+    
+    @PutMapping(value = "/{id}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<TeacherResponse> updateTeacherWithImages(
+            @PathVariable int id,
+            @RequestPart("data") TeacherRequests request,
+            @RequestPart(value = "addharImage", required = false) MultipartFile addharImage,
+            @RequestPart(value = "markshitImage", required = false) MultipartFile markshitImage,
+            @RequestPart(value = "profilePicture", required = false) MultipartFile profilePicture) {
+        return ResponseEntity.ok(teacherService.updateTeacherWithImages(id, request, addharImage, markshitImage, profilePicture));
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteTeacher(@PathVariable int id) {

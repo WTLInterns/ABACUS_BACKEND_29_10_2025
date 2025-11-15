@@ -67,8 +67,28 @@ public class TeacherService {
     teacher.setEmail(request.getEmail());
     teacher.setPassword(request.getPassword());
     teacher.setRole("TEACHER");
-    teacher.setFees(15000L);
-    teacher.setRemainingAmount(15000L);
+    teacher.setTeacherId(request.getTeacherId());
+    
+    
+    // Handle fees calculation
+    Long fees = request.getFees(); // Will be null if not provided
+    Long paid = request.getPaid(); // Will be null if not provided
+    
+    // If fees is not provided, set default values
+    if (fees == null) {
+        fees = 15000L; // Default to 15000 if not provided
+    }
+    
+    // If paid is not provided, default to 0
+    if (paid == null) {
+        paid = 0L;
+    }
+    
+    Long remaining = fees - paid;
+    
+    teacher.setFees(fees);
+    teacher.setRemainingAmount(remaining);
+    
     teacher.setMasterAdmin(masterAdmin);
     teacher.setBranchName(request.getBranchName());
     
@@ -80,23 +100,16 @@ public class TeacherService {
 
     Teacher savedTeacher = teacherRepository.save(teacher);
 
-    if (request.getPaid() != null && request.getPaid() > 0) {
-        Long paid = request.getPaid();
-        Long totalFees = savedTeacher.getFees() != null ? savedTeacher.getFees() : 0L;
-        Long remaining = totalFees - paid;
-
+    if (paid > 0) {
         Payment payment = new Payment();
         payment.setReceiptNo("REC" + System.currentTimeMillis());
         payment.setPaymentMode(request.getPaymentType());
-        payment.setFees(totalFees);
+        payment.setFees(fees);
         payment.setPaid(paid);
         payment.setRemainingAmount(remaining);
         payment.setTeacher(savedTeacher);           
 
         paymentRepo.save(payment);
-
-        savedTeacher.setRemainingAmount(remaining);
-        teacherRepository.save(savedTeacher);
 
         receiptService.generateReceipt(payment);
     }
@@ -127,14 +140,34 @@ public class TeacherService {
         teacher.setLastName(request.getLastName());
         teacher.setEmail(request.getEmail());
         teacher.setPassword(request.getPassword());
+        teacher.setTeacherId(request.getTeacherId());
         teacher.setRole("TEACHER");
-        teacher.setFees(15000L);
-        teacher.setRemainingAmount(15000L);
+        
+        // Handle fees calculation
+        Long fees = request.getFees(); // Will be null if not provided
+        Long paid = request.getPaid(); // Will be null if not provided
+        
+        // If fees is not provided, set default values
+        if (fees == null) {
+            fees = 15000L; // Default to 15000 if not provided
+        }
+        
+        // If paid is not provided, default to 0
+        if (paid == null) {
+            paid = 0L;
+        }
+        
+        Long remaining = fees - paid;
+        
+        teacher.setFees(fees);
+        teacher.setRemainingAmount(remaining);
+        
         teacher.setMasterAdmin(masterAdmin);
         teacher.setBranchName(request.getBranchName());
         teacher.setEducation(request.getEducation());
         teacher.setMarkshit(request.getMarkshit());
         teacher.setInvoice(request.getInvoice());
+        teacher.setTeacherId(request.getTeacherId());
 
         // Upload images if provided
         try {
@@ -166,23 +199,16 @@ public class TeacherService {
 
         Teacher savedTeacher = teacherRepository.save(teacher);
 
-        if (request.getPaid() != null && request.getPaid() > 0) {
-            Long paid = request.getPaid();
-            Long totalFees = savedTeacher.getFees() != null ? savedTeacher.getFees() : 0L;
-            Long remaining = totalFees - paid;
-
+        if (paid > 0) {
             Payment payment = new Payment();
             payment.setReceiptNo("REC" + System.currentTimeMillis());
             payment.setPaymentMode(request.getPaymentType());
-            payment.setFees(totalFees);
+            payment.setFees(fees);
             payment.setPaid(paid);
             payment.setRemainingAmount(remaining);
             payment.setTeacher(savedTeacher);
 
             paymentRepo.save(payment);
-
-            savedTeacher.setRemainingAmount(remaining);
-            teacherRepository.save(savedTeacher);
 
             receiptService.generateReceipt(payment);
         }
@@ -190,8 +216,134 @@ public class TeacherService {
         return mapToResponse(savedTeacher);
     }
 
+    public TeacherResponse updateTeacherWithImages(int id, TeacherRequests request,
+                                                MultipartFile addharImage,
+                                                MultipartFile markshitImage,
+                                                MultipartFile profilePicture) {
+        Teacher teacher = teacherRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Teacher not found with id: " + id));
 
+        // Store old image URLs for cleanup
+        String oldAddharImageUrl = teacher.getAddharImage();
+        String oldMarkshitImageUrl = teacher.getMarkshitImage();
+        String oldProfilePictureUrl = teacher.getProfilePicture();
 
+        teacher.setFirstName(request.getFirstName());
+        teacher.setLastName(request.getLastName());
+        teacher.setEmail(request.getEmail());
+        teacher.setPassword(request.getPassword());
+        teacher.setTeacherId(request.getTeacherId());
+        
+        // Update new fields
+        teacher.setBranchName(request.getBranchName());
+        teacher.setEducation(request.getEducation());
+        teacher.setMarkshit(request.getMarkshit());
+        teacher.setInvoice(request.getInvoice());
+        
+        // Handle fees update if provided
+        if (request.getFees() != null) {
+            teacher.setFees(request.getFees());
+        }
+        
+        // Handle payment if provided
+        if (request.getPaid() != null && request.getPaid() > 0) {
+            // Add the new payment to existing payments
+            Long currentRemaining = teacher.getRemainingAmount() != null ? teacher.getRemainingAmount() : teacher.getFees();
+            Long newRemaining = currentRemaining - request.getPaid();
+            
+            teacher.setRemainingAmount(newRemaining);
+            
+            // Create a new payment record
+            Payment payment = new Payment();
+            payment.setReceiptNo("REC" + System.currentTimeMillis());
+            payment.setPaymentMode(request.getPaymentType());
+            payment.setFees(teacher.getFees());
+            payment.setPaid(request.getPaid());
+            payment.setRemainingAmount(newRemaining);
+            payment.setTeacher(teacher);
+            
+            paymentRepo.save(payment);
+            
+            receiptService.generateReceipt(payment);
+        }
+
+        // Upload new images if provided and delete old ones
+        try {
+            // Handle aadhar image
+            if (addharImage != null && !addharImage.isEmpty()) {
+                // Delete old image from Cloudinary if it exists
+                if (oldAddharImageUrl != null && !oldAddharImageUrl.isEmpty()) {
+                    try {
+                        String publicId = extractCloudinaryPublicId(oldAddharImageUrl);
+                        if (publicId != null) {
+                            cloudinaryService.delete(publicId);
+                        }
+                    } catch (IOException e) {
+                        // Log error but continue with upload
+                        System.err.println("Failed to delete old aadhar image: " + e.getMessage());
+                    }
+                }
+                
+                // Upload new image
+                Map<String, Object> uploadRes = cloudinaryService.upload(addharImage);
+                Object url = uploadRes.get("secure_url");
+                if (url != null) {
+                    teacher.setAddharImage(url.toString());
+                }
+            }
+            
+            // Handle marksheet image
+            if (markshitImage != null && !markshitImage.isEmpty()) {
+                // Delete old image from Cloudinary if it exists
+                if (oldMarkshitImageUrl != null && !oldMarkshitImageUrl.isEmpty()) {
+                    try {
+                        String publicId = extractCloudinaryPublicId(oldMarkshitImageUrl);
+                        if (publicId != null) {
+                            cloudinaryService.delete(publicId);
+                        }
+                    } catch (IOException e) {
+                        // Log error but continue with upload
+                        System.err.println("Failed to delete old marksheet image: " + e.getMessage());
+                    }
+                }
+                
+                // Upload new image
+                Map<String, Object> uploadRes = cloudinaryService.upload(markshitImage);
+                Object url = uploadRes.get("secure_url");
+                if (url != null) {
+                    teacher.setMarkshitImage(url.toString());
+                }
+            }
+            
+            // Handle profile picture
+            if (profilePicture != null && !profilePicture.isEmpty()) {
+                // Delete old image from Cloudinary if it exists
+                if (oldProfilePictureUrl != null && !oldProfilePictureUrl.isEmpty()) {
+                    try {
+                        String publicId = extractCloudinaryPublicId(oldProfilePictureUrl);
+                        if (publicId != null) {
+                            cloudinaryService.delete(publicId);
+                        }
+                    } catch (IOException e) {
+                        // Log error but continue with upload
+                        System.err.println("Failed to delete old profile picture: " + e.getMessage());
+                    }
+                }
+                
+                // Upload new image
+                Map<String, Object> uploadRes = cloudinaryService.upload(profilePicture);
+                Object url = uploadRes.get("secure_url");
+                if (url != null) {
+                    teacher.setProfilePicture(url.toString());
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to upload images", e);
+        }
+
+        Teacher updatedTeacher = teacherRepository.save(teacher);
+        return mapToResponse(updatedTeacher);
+    }
 
     public List<TeacherResponse> getAllTeachers() {
         return teacherRepository.findAll().stream()
@@ -213,6 +365,7 @@ public class TeacherService {
         teacher.setLastName(request.getLastName());
         teacher.setEmail(request.getEmail());
         teacher.setPassword(request.getPassword());
+        teacher.setTeacherId(request.getTeacherId());
         
         // Update new fields
         teacher.setBranchName(request.getBranchName());
@@ -220,6 +373,33 @@ public class TeacherService {
         teacher.setMarkshit(request.getMarkshit());
         teacher.setInvoice(request.getInvoice());
         teacher.setProfilePicture(request.getProfilePicture());
+        
+        // Handle fees update if provided
+        if (request.getFees() != null) {
+            teacher.setFees(request.getFees());
+        }
+        
+        // Handle payment if provided
+        if (request.getPaid() != null && request.getPaid() > 0) {
+            // Add the new payment to existing payments
+            Long currentRemaining = teacher.getRemainingAmount() != null ? teacher.getRemainingAmount() : teacher.getFees();
+            Long newRemaining = currentRemaining - request.getPaid();
+            
+            teacher.setRemainingAmount(newRemaining);
+            
+            // Create a new payment record
+            Payment payment = new Payment();
+            payment.setReceiptNo("REC" + System.currentTimeMillis());
+            payment.setPaymentMode(request.getPaymentType());
+            payment.setFees(teacher.getFees());
+            payment.setPaid(request.getPaid());
+            payment.setRemainingAmount(newRemaining);
+            payment.setTeacher(teacher);
+            
+            paymentRepo.save(payment);
+            
+            receiptService.generateReceipt(payment);
+        }
 
         Teacher updatedTeacher = teacherRepository.save(teacher);
         return mapToResponse(updatedTeacher);
@@ -277,7 +457,33 @@ public class TeacherService {
         response.setEmail(teacher.getEmail());
         response.setRole(teacher.getRole());
         response.setBranchNames(teacher.getBranchName());
-        response.setProfilePicture(teacher.getProfilePicture()); // Add profile picture to response
+        response.setProfilePicture(teacher.getProfilePicture()); 
+        response.setAadharImage(teacher.getAddharImage());
+        response.setTeacherId(teacher.getTeacherId());
+        response.setMarkshitImage(teacher.getMarkshitImage());
+        
+        // Add fees information
+        response.setFees(teacher.getFees());
+        response.setRemainingAmount(teacher.getRemainingAmount());
+        
+        // Add additional fields
+        response.setEducation(teacher.getEducation());
+        response.setMarkshit(teacher.getMarkshit());
+        response.setInvoice(teacher.getInvoice());
+        
+        // Set payment type from last payment if available
+        if (teacher.getPayments() != null && !teacher.getPayments().isEmpty() && !teacher.getPayments().isEmpty()) {
+            Payment lastPayment = teacher.getPayments().get(teacher.getPayments().size() - 1);
+            response.setPaymentType(lastPayment.getPaymentMode());
+        }
+        
+        // Calculate total paid from all payments
+        if (teacher.getPayments() != null && !teacher.getPayments().isEmpty()) {
+            Long totalPaid = teacher.getPayments().stream()
+                .mapToLong(Payment::getPaid)
+                .sum();
+            response.setPaid(totalPaid);
+        }
         
         if (teacher.getMasterAdmin() != null) {
             response.setMasterAdminName(teacher.getMasterAdmin().getFirstName() + " " + teacher.getMasterAdmin().getLastName());

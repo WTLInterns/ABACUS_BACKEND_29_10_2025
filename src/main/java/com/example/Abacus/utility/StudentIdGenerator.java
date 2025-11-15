@@ -12,7 +12,7 @@ public class StudentIdGenerator {
     @PersistenceContext
     private EntityManager entityManager;
 
-    private static final int INITIAL_ID = 1000;
+    private static final int INITIAL_ID = 100;
 
     @Transactional
     public int generateNextStudentId() {

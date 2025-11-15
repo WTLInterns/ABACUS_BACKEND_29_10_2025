@@ -16,6 +16,8 @@ public class TeacherRequests {
     private String email;
     private String password;
 
+    private String teacherId;
+
     private String paymentType;
 
     private List<String> branchName;
