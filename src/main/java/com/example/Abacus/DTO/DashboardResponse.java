@@ -16,4 +16,6 @@ public class DashboardResponse {
     private String enrollmentType;
 
     private String count;
+    
+    private int teacherId;  // Add teacherId field
 }

@@ -127,4 +127,10 @@ public class StudentController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
+
+    @GetMapping("/teacher/{teacherUserId}/competition-assign")
+    public List<StudentResponse> getStudentsByTeacherUserIdAndCompetitionAssign(@PathVariable int teacherUserId) {
+        return studentService.getStudentsByTeacherUserIdAndCompetitionAssign(teacherUserId);
+    }
 }

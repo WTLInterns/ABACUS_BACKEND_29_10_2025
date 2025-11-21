@@ -98,6 +98,7 @@ public List<DashboardResponse> getStudentEnrollmentTypeCountWithTeacher(int mast
                 response.setEmail(teacher.getEmail());
                 response.setEnrollmentType(enrollmentType);
                 response.setCount(String.valueOf(students.size()));
+                response.setTeacherId(teacher.getId());  // Set the teacherId
 
                 return response;
             })

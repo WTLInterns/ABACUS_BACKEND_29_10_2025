@@ -479,4 +479,52 @@ public class StudentService {
         return studentRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Student not found with id: " + id));
     }
+
+
+
+    public List<StudentResponse> getStudentsByTeacherUserIdAndCompetitionAssign(int teacherId) {
+        return studentRepo.findByTeacherId(teacherId)
+                .stream()
+                .map(student -> {
+                    StudentResponse response = new StudentResponse();
+                    response.setId(student.getId());
+                    response.setEnrollMeantType(student.getEnrollMeantType());
+                    response.setFirstName(student.getFirstName());
+                    response.setMiddleName(student.getMiddleName());
+                    response.setLastName(student.getLastName());
+                    response.setGender(student.getGender());
+                    response.setWhatsappNumber(student.getWhatsappNumber());
+                    response.setDob(student.getDob());
+                    response.setAddmissionDate(student.getAddmissionDate());
+                    response.setStd(student.getStd());
+                    response.setCurrentLevel(student.getCurrentLevel());
+                    response.setCenter(student.getCenter());
+                    response.setState(student.getState());
+                    response.setDistrict(student.getDistrict());
+                    response.setAddress(student.getAddress());
+                    response.setCity(student.getCity());
+                    response.setEmail(student.getEmail());
+                    response.setCountry(student.getCountry());
+                    response.setStatus(student.getStatus());
+                    response.setLevelWiseMark(student.getLevelWiseMark());
+                    
+                    // Set competition (singular in one-to-many relationship)
+                    if (student.getCompetition() != null) {
+                        CompetitionResponse competitionResponse = convertToCompetitionResponse(student.getCompetition());
+                        response.setCompetitions(List.of(competitionResponse));
+                    }
+                    
+                    if (student.getTeacher() != null) {
+                        response.setTeacherId(student.getTeacher().getId());
+                        response.setTeacherFirstName(student.getTeacher().getFirstName());
+                        response.setTeacherLastName(student.getTeacher().getLastName());
+                        response.setTeacherEmail(student.getTeacher().getEmail());
+                        // Set branch names from teacher
+                        response.setBranchNames(student.getTeacher().getBranchName());
+                    }
+                    
+                    return response;
+                })
+                .collect(Collectors.toList());
+    }
 }
