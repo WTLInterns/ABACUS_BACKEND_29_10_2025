@@ -383,6 +383,114 @@ public class StudentService {
         return response;
     }
     
+    // PARTIAL UPDATE - Only updates fields that are provided in the request
+    public StudentResponse partialUpdateStudent(int id, StudentRequest request) {
+        Student student = studentRepo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Student not found with id: " + id));
+
+        // Only update fields that are not null in the request
+        if (request.getFirstName() != null) {
+            student.setFirstName(request.getFirstName());
+        }
+        if (request.getMiddleName() != null) {
+            student.setMiddleName(request.getMiddleName());
+        }
+        if (request.getLastName() != null) {
+            student.setLastName(request.getLastName());
+        }
+        if (request.getGender() != null) {
+            student.setGender(request.getGender());
+        }
+        if (request.getWhatsappNumber() != null) {
+            student.setWhatsappNumber(request.getWhatsappNumber());
+        }
+        if (request.getAddress() != null) {
+            student.setAddress(request.getAddress());
+        }
+        if (request.getDob() != null) {
+            student.setDob(request.getDob());
+        }
+        if (request.getAddmissionDate() != null) {
+            student.setAddmissionDate(request.getAddmissionDate());
+        }
+        if (request.getStd() != null) {
+            student.setStd(request.getStd());
+        }
+        if (request.getCurrentLevel() != null) {
+            student.setCurrentLevel(request.getCurrentLevel());
+        }
+        if (request.getCenter() != null) {
+            student.setCenter(request.getCenter());
+        }
+        if (request.getState() != null) {
+            student.setState(request.getState());
+        }
+        if (request.getDistrict() != null) {
+            student.setDistrict(request.getDistrict());
+        }
+        if (request.getCity() != null) {
+            student.setCity(request.getCity());
+        }
+        if (request.getEmail() != null) {
+            student.setEmail(request.getEmail());
+        }
+        if (request.getTaluka() != null) {
+            student.setTaluka(request.getTaluka());
+        }
+        if (request.getPinCode() != null) {
+            student.setPinCode(request.getPinCode());
+        }
+        if (request.getEnrollMeantType() != null) {
+            student.setEnrollMeantType(request.getEnrollMeantType());
+        }
+        if (request.getCountry() != null) {
+            student.setCountry(request.getCountry());
+        }
+
+        Student updatedStudent = studentRepo.save(student);
+        
+        // Create StudentResponse object and set values directly
+        StudentResponse response = new StudentResponse();
+        response.setId(updatedStudent.getId());
+        response.setEnrollMeantType(updatedStudent.getEnrollMeantType());
+        response.setFirstName(updatedStudent.getFirstName());
+        response.setMiddleName(updatedStudent.getMiddleName());
+        response.setLastName(updatedStudent.getLastName());
+        response.setGender(updatedStudent.getGender());
+        response.setWhatsappNumber(updatedStudent.getWhatsappNumber());
+        response.setDob(updatedStudent.getDob());
+        response.setAddmissionDate(updatedStudent.getAddmissionDate());
+        response.setStd(updatedStudent.getStd());
+        response.setCurrentLevel(updatedStudent.getCurrentLevel());
+        response.setCenter(updatedStudent.getCenter());
+        response.setState(updatedStudent.getState());
+        response.setDistrict(updatedStudent.getDistrict());
+        response.setAddress(updatedStudent.getAddress());
+        response.setCity(updatedStudent.getCity());
+        response.setEmail(updatedStudent.getEmail());
+        response.setPinCode(updatedStudent.getPinCode());
+        response.setCountry(updatedStudent.getCountry());
+        response.setStatus(updatedStudent.getStatus());
+        response.setLevelWiseMark(updatedStudent.getLevelWiseMark());
+        
+        // Set competition (singular in one-to-many relationship)
+        if (updatedStudent.getCompetition() != null) {
+            CompetitionResponse competitionResponse = convertToCompetitionResponse(updatedStudent.getCompetition());
+            response.setCompetitions(List.of(competitionResponse));
+        }
+        
+        if (updatedStudent.getTeacher() != null) {
+            response.setTeacherId(updatedStudent.getTeacher().getId());
+            response.setTeacherFirstName(updatedStudent.getTeacher().getFirstName());
+            response.setTeacherLastName(updatedStudent.getTeacher().getLastName());
+            response.setTeacherEmail(updatedStudent.getTeacher().getEmail());
+            // Set branch names from teacher
+            response.setBranchNames(updatedStudent.getTeacher().getBranchName());
+        }
+
+        return response;
+    }
+    
     // Helper method to convert Competition to CompetitionResponse
     private CompetitionResponse convertToCompetitionResponse(Competition competition) {
         CompetitionResponse response = new CompetitionResponse();

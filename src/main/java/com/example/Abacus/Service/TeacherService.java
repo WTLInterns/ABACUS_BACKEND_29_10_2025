@@ -14,6 +14,7 @@ import com.example.Abacus.Repo.MasterAdminRepo;
 import com.example.Abacus.Repo.PaymentRepo;
 import com.example.Abacus.Repo.TeacherRepo;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -510,5 +511,40 @@ public class TeacherService {
         return null;
     }
 
+    // Add clear payment method
+    public Teacher clearTeacherPayment(int id, String amountPaid) {
+        Teacher teacher = teacherRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Teacher not found with id: " + id));
+        
+        // Validate the amountPaid
+        if (amountPaid == null || amountPaid.isEmpty()) {
+            throw new IllegalArgumentException("Amount paid cannot be null or empty");
+        }
+        
+        try {
+            // Get current ledger paid amount (could be null)
+            String currentLedgerPaidAmount = teacher.getLedgerPaidAmount();
+            if (currentLedgerPaidAmount == null) {
+                currentLedgerPaidAmount = "0";
+            }
+            
+            // Convert both values to BigDecimal for precise arithmetic
+            BigDecimal currentAmount = new BigDecimal(currentLedgerPaidAmount);
+            BigDecimal newAmount = new BigDecimal(amountPaid);
+            
+            // Add the amounts together
+            BigDecimal totalAmount = currentAmount.add(newAmount);
+            
+            // Update the ledgerPaidAmount field
+            teacher.setLedgerPaidAmount(totalAmount.toString());
+            
+            // Save and return the updated teacher
+            return teacherRepository.save(teacher);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid amount format: " + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to clear teacher payment: " + e.getMessage());
+        }
+    }
 
 }

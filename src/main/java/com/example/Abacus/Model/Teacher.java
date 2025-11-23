@@ -54,6 +54,8 @@ public class Teacher {
 
         private String profilePicture;
 
+        private String ledgerPaidAmount;
+
 
     @ManyToOne
     @JoinColumn(name = "master_admin_id")

@@ -220,8 +220,49 @@ public class LedgerService {
                 .subtract(new BigDecimal(ledger.getPaidPrice())))
             .reduce(BigDecimal.ZERO, BigDecimal::add);
 
+        // Subtract the ledgerPaidAmount if it exists
+        if (teacher.getLedgerPaidAmount() != null && !teacher.getLedgerPaidAmount().isEmpty()) {
+            try {
+                BigDecimal paidAmount = new BigDecimal(teacher.getLedgerPaidAmount());
+                outstanding = outstanding.subtract(paidAmount);
+                // Ensure outstanding doesn't go negative
+                if (outstanding.compareTo(BigDecimal.ZERO) < 0) {
+                    outstanding = BigDecimal.ZERO;
+                }
+            } catch (NumberFormatException e) {
+                // If there's an error parsing the paid amount, log it and continue with original calculation
+                System.err.println("Error parsing ledgerPaidAmount for teacher " + teacherId + ": " + e.getMessage());
+            }
+        }
+
         return outstanding.toString();
     }
 
+    public Ledger uploadScreenshot(int ledgerId, MultipartFile paymentScreenshot) {
+        Ledger ledger = ledgerRepo.findById(ledgerId)
+            .orElseThrow(() -> new LedgerServiceException("Ledger not found with id: " + ledgerId));
+            
+        if (paymentScreenshot != null && !paymentScreenshot.isEmpty()) {
+            try {
+                // Delete existing screenshot if present
+                if (ledger.getPaymentScreenshotPublicId() != null && !ledger.getPaymentScreenshotPublicId().isEmpty()) {
+                    cloudinaryService.delete(ledger.getPaymentScreenshotPublicId());
+                }
+                
+                // Upload new screenshot
+                Map uploadResult = cloudinaryService.upload(paymentScreenshot);
+                ledger.setPaymentScreenshotUrl((String) uploadResult.get("secure_url"));
+                ledger.setPaymentScreenshotPublicId((String) uploadResult.get("public_id"));
+                
+                // Save updated ledger
+                return ledgerRepo.save(ledger);
+            } catch (Exception e) {
+                System.err.println("Failed to upload payment screenshot to Cloudinary: " + e.getMessage());
+                throw new LedgerServiceException("Failed to upload screenshot: " + e.getMessage());
+            }
+        }
+        
+        return ledger;
+    }
 
 }

@@ -12,7 +12,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Entity
 @Data
 @AllArgsConstructor
@@ -23,18 +22,13 @@ public class Inventory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-   private String itemName;
+    private String itemName;
 
-   private int quantity;
+    private int quantity;
 
-   private Long pricePerItem;
+    private Long pricePerItem;
 
-     @ManyToOne
+    @ManyToOne
     @JoinColumn(name = "master_admin_id")
     private MasterAdmin masterAdmin;
-
-
-
-
-
 }

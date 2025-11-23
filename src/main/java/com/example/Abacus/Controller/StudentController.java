@@ -46,6 +46,12 @@ public class StudentController {
     public ResponseEntity<StudentResponse> updateStudent(@PathVariable int id, @RequestBody StudentRequest request) {
         return ResponseEntity.ok(studentService.updateStudent(id, request));
     }
+    
+    // PARTIAL UPDATE
+    @PutMapping("/{id}/partial")
+    public ResponseEntity<StudentResponse> partialUpdateStudent(@PathVariable int id, @RequestBody StudentRequest request) {
+        return ResponseEntity.ok(studentService.partialUpdateStudent(id, request));
+    }
 
     // DELETE
     @DeleteMapping("/{id}")

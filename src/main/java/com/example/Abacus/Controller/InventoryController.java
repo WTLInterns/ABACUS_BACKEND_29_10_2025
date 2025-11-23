@@ -13,7 +13,6 @@ import com.example.Abacus.Service.InventoryService;
 @RequestMapping("/inventory")
 public class InventoryController {
 
-
     @Autowired
     private InventoryService inventoryService;
 
@@ -21,7 +20,6 @@ public class InventoryController {
     public Inventory createInventory(@RequestBody Inventory inventory, @PathVariable int masterAdminId) {
         return inventoryService.createInventory(inventory,masterAdminId);
     }
-
 
     @DeleteMapping("/deleteInventory/{id}")
     public void deleteInventory(@PathVariable int id) {
@@ -38,18 +36,13 @@ public class InventoryController {
         return this.inventoryService.getInventoryById(id);
     }
 
-    @GetMapping("/getAllInventories/{masterAdminId}")
-    public List<InventoryResponse> getAllInventories(@PathVariable int masterAdminId){
-        return this.inventoryService.getAllInventories(masterAdminId);
+    @GetMapping("/master-admin/{masterAdminId}")
+    public List<InventoryResponse> getInventoriesByMasterAdmin(@PathVariable int masterAdminId){
+        return this.inventoryService.getInventoriesByMasterAdmin(masterAdminId);
     }
 
-
-    @GetMapping("/getAllInventory")
+    @GetMapping
     public List<InventoryResponse> getAllInventory(){
         return this.inventoryService.getAllInventory();
     }
-
-    
-
-    
 }

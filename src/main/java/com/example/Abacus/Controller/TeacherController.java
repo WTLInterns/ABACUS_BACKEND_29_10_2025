@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/teachers")
@@ -64,4 +66,14 @@ public class TeacherController {
     public ResponseEntity<List<TeacherResponse>> getTeachersByMasterAdmin(@PathVariable int masterAdminId) {
         return ResponseEntity.ok(teacherService.getTeachersByMasterAdmin(masterAdminId));
     }
+
+    // Add clear payment endpoint
+    @PutMapping("/{id}/clear-payment")
+    public ResponseEntity<TeacherResponse> clearTeacherPayment(@PathVariable int id, @RequestBody Map<String, String> request) {
+        String amountPaid = request.get("amountPaid");
+        teacherService.clearTeacherPayment(id, amountPaid);
+        TeacherResponse response = teacherService.getTeacherById(id);
+        return ResponseEntity.ok(response);
+    }
+
 }

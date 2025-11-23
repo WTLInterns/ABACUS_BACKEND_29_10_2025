@@ -18,4 +18,6 @@ public interface TeacherRepo extends JpaRepository<Teacher, Integer> {
     
     Optional<Teacher> findByEmail(String email);
     
+    List<Teacher> findByMasterAdminId(int masterAdminId);
+    
 }

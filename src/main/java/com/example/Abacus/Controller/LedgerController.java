@@ -28,6 +28,18 @@ public class LedgerController {
         return ResponseEntity.ok(createdLedger);
     }
 
+    @PutMapping("/upload-screenshot/{ledgerId}")
+    public ResponseEntity<Ledger> uploadScreenshot(
+            @PathVariable int ledgerId,
+            @RequestParam("paymentScreenshot") MultipartFile paymentScreenshot) {
+        try {
+            Ledger updatedLedger = ledgerService.uploadScreenshot(ledgerId, paymentScreenshot);
+            return ResponseEntity.ok(updatedLedger);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
     // Get all ledger entries
     @GetMapping("/getAll")
     public ResponseEntity<List<Ledger>> getAllLedgers() {

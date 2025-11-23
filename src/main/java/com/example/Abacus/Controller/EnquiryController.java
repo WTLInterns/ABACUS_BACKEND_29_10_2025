@@ -28,7 +28,7 @@ public class EnquiryController {
     }
 
     @GetMapping("/{id}")
-    public Enquiry getEnquiryById(@PathVariable Long id) {
+    public Enquiry getEnquiryById(@PathVariable int id) {
         return enquiryService.getEnquiryById(id);
     }
 
@@ -38,7 +38,7 @@ public class EnquiryController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteEnquiry(@PathVariable Long id) {
+    public void deleteEnquiry(@PathVariable int id) {
         enquiryService.deleteEnquiry(id);
     }
 }

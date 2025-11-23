@@ -18,7 +18,7 @@ public class EnquiryService {
         return enquiryRepo.findAll();
     }
 
-    public Enquiry getEnquiryById(Long id) {
+    public Enquiry getEnquiryById(int id) {
         return enquiryRepo.findById(id).orElse(null);
     }
 
@@ -26,7 +26,7 @@ public class EnquiryService {
         return enquiryRepo.save(enquiry);
     }
 
-    public void deleteEnquiry(Long id) {
+    public void deleteEnquiry(int id) {
         enquiryRepo.deleteById(id);
     }
 }

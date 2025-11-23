@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.Abacus.DTO.DashboardResponse;
 import com.example.Abacus.DTO.response.StudentResponse;
+import com.example.Abacus.Model.Student;
 import com.example.Abacus.Model.Teacher;
 import com.example.Abacus.Repo.InventoryRepo;
 import com.example.Abacus.Repo.MasterAdminRepo;
@@ -32,7 +33,9 @@ public class DashboardService {
     public List<StudentResponse> getStudentByEnrollMentType(String enrollMentType, int teacherId) {
     return studentRepo.findAll()
             .stream()
-            .filter(student -> student.getEnrollMeantType().equalsIgnoreCase(enrollMentType)
+            .filter(student -> student.getEnrollMeantType() != null &&  // Add null check here
+                    student.getEnrollMeantType().equalsIgnoreCase(enrollMentType)
+                    && student.getTeacher() != null  // Add null check here
                     && student.getTeacher().getId() == teacherId)
             .map(student -> {
                 StudentResponse response = new StudentResponse();
@@ -42,7 +45,7 @@ public class DashboardService {
                 response.setStatus(student.getStatus());
                 response.setEmail(student.getEmail());
                 response.setEnrollMeantType(student.getEnrollMeantType());
-                response.setTeacherId(student.getTeacher().getId());
+                response.setTeacherId(student.getTeacher() != null ? student.getTeacher().getId() : 0);  // Add null check here
                 response.setCurrentLevel(student.getCurrentLevel());
                 return response;
             })
@@ -52,7 +55,8 @@ public class DashboardService {
 public String getStudentCountByTeacher(int teacherId){
     return studentRepo.findAll()
             .stream()
-            .filter(student -> student.getTeacher().getId() == teacherId)
+            .filter(student -> student.getTeacher() != null &&  // Add null check here
+                    student.getTeacher().getId() == teacherId)
             .count() + "";
 }
 
@@ -60,22 +64,28 @@ public String getStudentCountByTeacher(int teacherId){
 public String getStudentStatusCountByTeacherId(int teacher, String status){
     return studentRepo.findAll()
             .stream()
-            .filter(student -> student.getTeacher().getId() == teacher && student.getStatus().equalsIgnoreCase(status))
+            .filter(student -> student.getTeacher().getId() == teacher && 
+                               student.getStatus() != null &&  // Add null check here
+                               student.getStatus().equalsIgnoreCase(status))
             .count() + "";
 }
 
 public String getStudentEnrollMentTypeCountByTeacherId(int teacher, String enrollMentType){
     return studentRepo.findAll()
             .stream()
-            .filter(student -> student.getTeacher().getId() == teacher && student.getEnrollMeantType().equalsIgnoreCase(enrollMentType))
+            .filter(student -> student.getTeacher().getId() == teacher && 
+                               student.getEnrollMeantType() != null &&  // Add null check here
+                               student.getEnrollMeantType().equalsIgnoreCase(enrollMentType))
             .count() + "";
 }
+
 // ----------------------------FOR ADMIN------------------------
 
 public String getTeacherCountByMasterAdminId(int masterAdminId){
     return teacherRepo.findAll()
             .stream()
-            .filter(teacher -> teacher.getMasterAdmin().getId() == masterAdminId)
+            .filter(teacher -> teacher.getMasterAdmin() != null &&  // Add null check here
+                    teacher.getMasterAdmin().getId() == masterAdminId)
             .count() + "";
 }
 
@@ -85,6 +95,7 @@ public List<DashboardResponse> getStudentEnrollmentTypeCountWithTeacher(int mast
             .filter(student -> student.getTeacher() != null &&
                                student.getTeacher().getMasterAdmin() != null &&
                                student.getTeacher().getMasterAdmin().getId() == masterAdminId &&
+                               student.getEnrollMeantType() != null &&  // Add null check here
                                student.getEnrollMeantType().equalsIgnoreCase(enrollmentType))
             .collect(Collectors.groupingBy(student -> student.getTeacher()))
             .entrySet()
@@ -105,16 +116,15 @@ public List<DashboardResponse> getStudentEnrollmentTypeCountWithTeacher(int mast
             .collect(Collectors.toList());
 }
 
-
 public String getStudentCountByEnrollmentTypeByMasterAdminId(int masterAdminId, String enrollmentType){
     return studentRepo.findAll()
             .stream()
             .filter(student -> student.getTeacher() != null &&
                                student.getTeacher().getMasterAdmin() != null &&
                                student.getTeacher().getMasterAdmin().getId() == masterAdminId &&
+                               student.getEnrollMeantType() != null &&  // Add null check here
                                student.getEnrollMeantType().equalsIgnoreCase(enrollmentType))
             .count() + "";
-
 }
 
 public String getStudentCountByStatusByMasterAdminId(int masterAdminId, String status){
@@ -123,6 +133,7 @@ public String getStudentCountByStatusByMasterAdminId(int masterAdminId, String s
             .filter(student -> student.getTeacher() != null &&
                                student.getTeacher().getMasterAdmin() != null &&
                                student.getTeacher().getMasterAdmin().getId() == masterAdminId &&
+                               student.getStatus() != null &&  // Add null check here
                                student.getStatus().equalsIgnoreCase(status))
             .count() + "";
 }
@@ -131,7 +142,8 @@ public String getStudentCountByStatusByMasterAdminId(int masterAdminId, String s
 public String getInventoryCountByMasterAdminId(int masterAdminId){
     return this.inventoryRepo.findAll()
             .stream()
-            .filter(inventory -> inventory.getMasterAdmin().getId() == masterAdminId)
+            .filter(inventory -> inventory.getMasterAdmin() != null &&  // Add null check here
+                    inventory.getMasterAdmin().getId() == masterAdminId)
             .count() + "";
 }
 
